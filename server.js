@@ -20,12 +20,74 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({
-  origin: "*",
+// Production & Development CORS Configuration
+const allowedOrigins = [
+  "https://trinex-admin.vercel.app",
+  "https://trinex-fe.vercel.app",
+  "https://trinexsystems.com",
+  "https://www.trinexsystems.com",
+  "https://admin.trinexsystems.com",
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5000",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "http://127.0.0.1:5000",
+  "http://admin.localhost:5174",
+  ...(process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim().replace(/\/+$/, ""))
+    : []),
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser requests (Postman, curl, Render health checks, server-to-server)
+    if (!origin) return callback(null, true);
+
+    const cleanOrigin = origin.replace(/\/+$/, "");
+
+    // Direct match with known production or local origins
+    if (allowedOrigins.includes(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // Allow all Vercel deployment and preview URLs (*.vercel.app)
+    if (/^https:\/\/([a-zA-Z0-9_-]+\.)?vercel\.app$/.test(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // Allow local network IP testing (e.g. 192.168.x.x, 10.x.x.x)
+    if (/^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // Permissive in development mode or if explicitly enabled
+    if (process.env.NODE_ENV !== "production" || process.env.ALLOW_ALL_ORIGINS === "true") {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+    "Cache-Control",
+    "Pragma",
+    "Expires",
+  ],
+  exposedHeaders: ["Content-Range", "X-Content-Range", "Content-Disposition"],
+  maxAge: 86400, // Cache preflight for 24 hours
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
