@@ -140,10 +140,12 @@ app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Health check endpoint
-app.get("/api/health", (req, res) => {
+// Health check & API status endpoints
+app.get(["/health", "/api/health", "/api/status", "/api"], (req, res) => {
   res.json({
+    success: true,
     status: "healthy",
+    message: "Trinex Systems Backend API is working properly.",
     service: "Trinex Systems Admin & Inventory Engine",
     timestamp: new Date().toISOString()
   });
