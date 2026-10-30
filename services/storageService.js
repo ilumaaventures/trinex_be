@@ -738,27 +738,46 @@ export async function getStats() {
   };
 }
 
+function matchesCategoryProduct(p, catId, catName) {
+  if (!p) return false;
+  const cId = String(catId || "").trim().toLowerCase();
+  const cName = String(catName || "").trim().toLowerCase();
+  const cSlug = slugify(catName || catId || "");
+
+  const pKey = String(p.categoryKey || "").trim().toLowerCase();
+  const pCat = String(p.category || "").trim().toLowerCase();
+  const pSlug = slugify(p.category || p.categoryKey || "");
+
+  const targets = new Set([
+    cId,
+    cId.replace(/s$/, ""),
+    cName,
+    cName.replace(/s$/, ""),
+    cSlug,
+    cSlug.replace(/s$/, ""),
+  ]);
+
+  if (pKey && (targets.has(pKey) || targets.has(pKey.replace(/s$/, "")))) return true;
+  if (pCat && (targets.has(pCat) || targets.has(pCat.replace(/s$/, "")))) return true;
+  if (pSlug && (targets.has(pSlug) || targets.has(pSlug.replace(/s$/, "")))) return true;
+
+  return false;
+}
+
 export async function readCategories() {
   if (isMongoConnected()) {
     try {
-      const cats = await Category.find().sort({ createdAt: 1 });
+      const [cats, liveProducts] = await Promise.all([
+        Category.find().sort({ createdAt: 1 }),
+        Product.find({ isHidden: { $ne: true } }).lean(),
+      ]);
       if (cats.length > 0) {
-        // Compute dynamic counts per category
-        const counts = await Product.aggregate([
-          { $group: { _id: "$categoryKey", count: { $sum: 1 } } },
-        ]);
-        const countMap = {};
-        counts.forEach((c) => {
-          if (c._id) {
-            countMap[String(c._id).toLowerCase()] = c.count;
-            countMap[String(c._id).toLowerCase().replace(/s$/, "")] = c.count;
-          }
-        });
-
         return cats.map((c) => {
           const json = c.toJSON();
-          const k = String(json.id || "").toLowerCase();
-          json.count = countMap[k] ?? countMap[k.replace(/s$/, "")] ?? json.count ?? 0;
+          const count = liveProducts.filter((p) =>
+            matchesCategoryProduct(p, json.id || json._id, json.name)
+          ).length;
+          json.count = count;
           return json;
         });
       }
@@ -773,19 +792,15 @@ export async function readCategories() {
     try {
       const prodRaw = await fs.readFile(PRODUCTS_FILE, "utf-8");
       const prods = JSON.parse(prodRaw);
-      const countMap = {};
-      prods.forEach((p) => {
-        if (p.categoryKey) {
-          const k = String(p.categoryKey).toLowerCase();
-          countMap[k] = (countMap[k] || 0) + 1;
-          countMap[k.replace(/s$/, "")] = (countMap[k.replace(/s$/, "")] || 0) + 1;
-        }
-      });
+      const liveProducts = prods.filter((p) => !p.isHidden);
+
       return cats.map((c) => {
-        const k = String(c.id || "").toLowerCase();
+        const count = liveProducts.filter((p) =>
+          matchesCategoryProduct(p, c.id || c._id, c.name)
+        ).length;
         return {
           ...c,
-          count: countMap[k] ?? countMap[k.replace(/s$/, "")] ?? c.count ?? 0,
+          count,
         };
       });
     } catch {

@@ -60,7 +60,6 @@
     "isHidden": false
   },
   {
-    "isHidden": false,
     "_id": "6ae0925dca61ede5104d6cd9",
     "id": "motors",
     "name": "MOTORS & GENERATORS",
@@ -69,7 +68,8 @@
     "image": "/assets/products/motors_generators.jpg",
     "count": 6,
     "createdAt": "2026-10-27T12:00:29.510Z",
-    "updatedAt": "2026-10-27T12:00:29.510Z"
+    "updatedAt": "2026-10-30T11:12:43.915Z",
+    "isHidden": false
   },
   {
     "_id": "6ae0925dca61ede5104d6cda",
@@ -80,7 +80,7 @@
     "image": "/assets/products/transformers_chokes.jpg",
     "count": 6,
     "createdAt": "2026-10-27T12:00:29.511Z",
-    "updatedAt": "2026-10-30T07:44:11.231Z",
+    "updatedAt": "2026-10-30T11:12:55.686Z",
     "isHidden": false
   },
   {
@@ -105,6 +105,6 @@
     "count": 0,
     "isHidden": false,
     "createdAt": "2026-10-28T12:55:57.048Z",
-    "updatedAt": "2026-10-30T07:31:29.272Z"
+    "updatedAt": "2026-10-30T11:13:39.388Z"
   }
 ]
