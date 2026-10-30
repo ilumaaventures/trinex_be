@@ -1,0 +1,110 @@
+[
+  {
+    "_id": "6ae0925dca61ede5104d6cd4",
+    "id": "resistors",
+    "name": "RESISTORS",
+    "subtitle": "Precision & Power Resistors",
+    "description": "High-stability precision metal-film, wirewound, and SMD chip resistors for defence & aerospace applications.",
+    "image": "/assets/products/resistors.jpg",
+    "count": 36,
+    "createdAt": "2026-10-27T12:00:29.505Z",
+    "updatedAt": "2026-10-27T13:25:16.133Z",
+    "isHidden": false
+  },
+  {
+    "isHidden": false,
+    "_id": "6ae0925dca61ede5104d6cd5",
+    "id": "capacitors",
+    "name": "CAPACITORS",
+    "subtitle": "Tantalum, Ceramic & Film",
+    "description": "Mil-spec tantalum, high-voltage film, and precision multi-layer ceramic capacitors.",
+    "image": "/assets/products/capacitors.jpg",
+    "count": 7,
+    "createdAt": "2026-10-27T12:00:29.510Z",
+    "updatedAt": "2026-10-27T12:00:29.510Z"
+  },
+  {
+    "isHidden": false,
+    "_id": "6ae0925dca61ede5104d6cd6",
+    "id": "microcircuits",
+    "name": "MICROCIRCUITS",
+    "subtitle": "Logic & Digital ICs",
+    "description": "Ceramic hermetic and commercial digital logic circuits, counters, and tactical embedded ICs.",
+    "image": "/assets/products/microcircuits.jpg",
+    "count": 6,
+    "createdAt": "2026-10-27T12:00:29.510Z",
+    "updatedAt": "2026-10-27T12:00:29.510Z"
+  },
+  {
+    "isHidden": false,
+    "_id": "6ae0925dca61ede5104d6cd7",
+    "id": "transistors-diodes",
+    "name": "DIODES & TRANSISTORS",
+    "subtitle": "Power Transistors & Zener Diodes",
+    "description": "High-reliability metal-can transistors (TO-3, TO-39), precision Zener diodes, and voltage reference stabilitrons.",
+    "image": "/assets/products/diodes_transistors.jpg",
+    "count": 14,
+    "createdAt": "2026-10-27T12:00:29.510Z",
+    "updatedAt": "2026-10-27T12:00:29.510Z"
+  },
+  {
+    "_id": "6ae0925dca61ede5104d6cd8",
+    "id": "connectors",
+    "name": "CONNECTORS",
+    "subtitle": "Mil-Spec Multi-Pin Connectors",
+    "description": "Hermetic high-density circular and rectangular connectors with gold-plated pins (31-Pin, 61-Pin).",
+    "image": "/assets/products/connectors.jpg",
+    "count": 2,
+    "createdAt": "2026-10-27T12:00:29.510Z",
+    "updatedAt": "2026-10-27T13:20:39.811Z",
+    "isHidden": false
+  },
+  {
+    "isHidden": false,
+    "_id": "6ae0925dca61ede5104d6cd9",
+    "id": "motors",
+    "name": "MOTORS & GENERATORS",
+    "subtitle": "Precision Servo Motors",
+    "description": "Miniature DC servo motors, tachogenerators, and aerospace drive actuators.",
+    "image": "/assets/products/motors_generators.jpg",
+    "count": 6,
+    "createdAt": "2026-10-27T12:00:29.510Z",
+    "updatedAt": "2026-10-27T12:00:29.510Z"
+  },
+  {
+    "isHidden": false,
+    "_id": "6ae0925dca61ede5104d6cda",
+    "id": "transformers",
+    "name": "TRANSFORMERS & POWER",
+    "subtitle": "Transformers, Power Units & Chokes",
+    "description": "High-frequency pulse transformers, compact modular DC power units, and RF chokes.",
+    "image": "/assets/products/transformers_chokes.jpg",
+    "count": 6,
+    "createdAt": "2026-10-27T12:00:29.511Z",
+    "updatedAt": "2026-10-27T12:00:29.511Z"
+  },
+  {
+    "isHidden": false,
+    "_id": "6ae0925dca61ede5104d6cdb",
+    "id": "switches-fuses",
+    "name": "SWITCHES & PROTECTION",
+    "subtitle": "Switches, Fuses & Indicators",
+    "description": "Tactical push buttons, micro-switches, cartridge fuse links, panel fuse holders, and indicator lamps.",
+    "image": "/assets/products/switches_fuses.jpg",
+    "count": 6,
+    "createdAt": "2026-10-27T12:00:29.511Z",
+    "updatedAt": "2026-10-27T12:00:29.511Z"
+  },
+  {
+    "_id": "6ae1f0dd7821a6c830eb95d6",
+    "id": "demo",
+    "name": "DEMO",
+    "subtitle": "",
+    "description": "",
+    "image": "https://res.cloudinary.com/dtzxn6wrm/image/upload/v1793192093/trinix/file_jntkgs.png",
+    "count": 0,
+    "isHidden": false,
+    "createdAt": "2026-10-28T12:55:57.048Z",
+    "updatedAt": "2026-10-29T06:29:39.649Z"
+  }
+]

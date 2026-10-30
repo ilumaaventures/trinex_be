@@ -1,0 +1,29 @@
+{
+  "name": "trinex-admin",
+  "version": "1.0.0",
+  "description": "Backend API Server & Admin Management Module for Trinex Systems LLP",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cloudinary": "^2.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.24.7",
+    "multer": "^1.4.5-lts.1"
+  },
+  "keywords": [
+    "trinex",
+    "admin",
+    "seo",
+    "inventory",
+    "crud",
+    "defence"
+  ],
+  "author": "Trinex Systems LLP",
+  "license": "ISC"
+}

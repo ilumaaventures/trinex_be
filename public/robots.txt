@@ -1,0 +1,7 @@
+# robots.txt for Trinex Systems LLP
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://trinexsystems.com/sitemap.xml

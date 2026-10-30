@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trinex Systems LLP | Admin Products &amp; SEO Management Console</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brandDark: '#071522',
+            brandNavy: '#0D1D2A',
+            brandGold: '#A77C3A',
+            brandGoldLight: '#C29A58',
+            brandOffWhite: '#FAF9F6',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .bg-blueprint {
+      background-image: linear-gradient(to right, rgba(167, 124, 58, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(167, 124, 58, 0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="bg-brandOffWhite text-[#132333] font-sans min-h-screen flex flex-col antialiased">
+
+  <!-- TOP CONSOLE HEADER -->
+  <header class="bg-brandDark text-white border-b border-white/10 sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-brandGold animate-pulse"></span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-bold uppercase tracking-wider text-white">TRINEX SYSTEMS LLP</h1>
+            <span class="text-[10px] font-mono px-2 py-0.5 bg-brandGold text-brandDark font-black rounded-[2px]">
+              SUBDOMAIN &bull; ADMIN PORTAL
+            </span>
+          </div>
+          <p class="text-[11px] text-white/50 font-mono">admin.trinexsystems.com &bull; MIL-SPEC INVENTORY &amp; SEO ENGINE</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="http://localhost:5173/#/products" target="_blank" class="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/20 text-white text-[11px] font-mono uppercase tracking-wider rounded-[2px] transition-colors flex items-center gap-1.5">
+          <span>&nearr; OPEN CLIENT SITE</span>
+        </a>
+        <button id="btn-export-json" class="px-3 py-1.5 bg-brandNavy hover:bg-brandDark text-white text-[11px] font-mono uppercase tracking-wider rounded-[2px] border border-brandGold/40 transition-colors">
+          EXPORT JSON
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN BODY -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+    <!-- METRICS STRIP -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="p-4 bg-white border border-[#132333]/10 rounded-[3px] shadow-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-[#68717A] mb-1">Total Products</div>
+        <div id="stat-total" class="text-2xl font-black text-brandDark font-mono">0</div>
+        <div class="text-[11px] text-[#68717A] mt-0.5 font-mono">Active in database</div>
+      </div>
+
+      <div class="p-4 bg-white border border-[#132333]/10 rounded-[3px] shadow-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-[#68717A] mb-1">Delhi Ready Stock</div>
+        <div id="stat-delhi" class="text-2xl font-black text-brandGold font-mono">0</div>
+        <div class="text-[11px] text-[#68717A] mt-0.5 font-mono">Immediate dispatch</div>
+      </div>
+
+      <div class="p-4 bg-white border border-[#132333]/10 rounded-[3px] shadow-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-[#68717A] mb-1">Total Stock Units</div>
+        <div id="stat-units" class="text-2xl font-black text-brandDark font-mono">0</div>
+        <div class="text-[11px] text-[#68717A] mt-0.5 font-mono">Components recorded</div>
+      </div>
+
+      <div class="p-4 bg-white border border-[#132333]/10 rounded-[3px] shadow-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-[#68717A] mb-1">SEO Health Score</div>
+        <div id="stat-seo" class="text-2xl font-black text-emerald-700 font-mono">0%</div>
+        <div class="text-[11px] text-[#68717A] mt-0.5 font-mono">SERP &amp; Schema ready</div>
+      </div>
+    </div>
+
+    <!-- CONTROL TOOLBAR -->
+    <div class="bg-white p-4 sm:p-5 rounded-[3px] border border-[#132333]/15 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div class="relative flex-1">
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Search by part number, category, description, meta keywords..."
+            class="w-full px-3.5 py-2.5 text-xs bg-[#FAF9F6] border border-[#132333]/20 rounded-[2px] focus:outline-none focus:ring-1 focus:ring-brandGold"
+          />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btn-add-product" class="px-4 py-2.5 bg-brandGold hover:bg-brandGoldLight text-brandDark text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors flex items-center gap-2 shadow-sm font-mono">
+            <span>+ ADD NEW PRODUCT &amp; SEO</span>
+          </button>
+          <button id="btn-reset-catalog" class="px-3 py-2.5 border border-[#132333]/20 hover:border-red-400 text-xs text-[#68717A] hover:text-red-600 font-bold uppercase tracking-wider rounded-[2px] transition-colors font-mono">
+            RESET
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Pills -->
+      <div id="categories-container" class="flex flex-wrap items-center gap-1.5 pt-3 border-t border-[#132333]/10">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- PRODUCTS TABLE -->
+    <div class="bg-white border border-[#132333]/15 rounded-[3px] shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-brandDark text-white text-[11px] font-mono uppercase tracking-wider border-b border-white/10">
+              <th class="py-3 px-4">Part Number / SKU</th>
+              <th class="py-3 px-4">Image</th>
+              <th class="py-3 px-4">Category</th>
+              <th class="py-3 px-4">Technical Details</th>
+              <th class="py-3 px-4">Stock &amp; Location</th>
+              <th class="py-3 px-4">SEO Health</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody" class="divide-y divide-[#132333]/10 text-xs">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+      <div id="table-footer-info" class="bg-[#FAF9F6] border-t border-[#132333]/10 px-4 py-2.5 flex items-center justify-between text-xs text-[#68717A] font-mono">
+        <span>Loading components database...</span>
+        <span>Node.js / Express Backend Active</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- PRODUCT & SEO EDITOR MODAL -->
+  <div id="editor-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-brandOffWhite border border-[#132333]/20 w-full max-w-4xl max-h-[92vh] flex flex-col rounded-[3px] shadow-2xl overflow-hidden my-auto">
+      
+      <!-- Modal Header -->
+      <div class="bg-brandDark text-white px-6 py-4 flex items-center justify-between border-b border-white/10 flex-shrink-0">
+        <div>
+          <h2 id="modal-title" class="text-base font-bold tracking-wide uppercase">Add New Product &amp; SEO Metadata</h2>
+          <p class="text-[11px] text-white/50 font-mono">TRINEX SYSTEMS BACKEND ENGINE</p>
+        </div>
+        <button id="btn-close-modal" class="text-white/60 hover:text-white text-lg font-bold">&times;</button>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="bg-white border-b border-[#132333]/10 px-6 flex items-center gap-4 overflow-x-auto flex-shrink-0 text-xs font-bold uppercase tracking-wider">
+        <button id="tab-btn-basic" class="py-3 px-3 border-b-2 border-brandGold text-brandDark">1. Basic Details</button>
+        <button id="tab-btn-image" class="py-3 px-3 border-b-2 border-transparent text-[#68717A] hover:text-brandDark">2. Image Manager</button>
+        <button id="tab-btn-seo" class="py-3 px-3 border-b-2 border-transparent text-[#68717A] hover:text-brandDark">3. SEO &amp; Meta Suite</button>
+        <button id="tab-btn-preview" class="py-3 px-3 border-b-2 border-transparent text-[#68717A] hover:text-brandDark">4. SERP &amp; Schema Preview</button>
+      </div>
+
+      <!-- Tab Panels Form -->
+      <form id="product-form" class="flex-1 overflow-y-auto p-6 space-y-6">
+        <input type="hidden" id="form-id" name="id" value="" />
+
+        <!-- TAB 1: BASIC -->
+        <div id="tab-content-basic" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Part Number / SKU *</label>
+              <input type="text" id="form-partNumber" required placeholder="e.g. TPP-95-40-400" class="w-full px-3 py-2 text-xs font-mono bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Category</label>
+              <select id="form-category" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]">
+                <option value="transformers">TRANSFORMER</option>
+                <option value="resistors">RESISTOR</option>
+                <option value="capacitors">CAPACITOR</option>
+                <option value="microcircuits">MICRO CIRCUIT</option>
+                <option value="transistors-diodes">DIODES &amp; TRANSISTORS</option>
+                <option value="connectors">CONNECTOR</option>
+                <option value="motors">MOTORS &amp; GENERATORS</option>
+                <option value="switches-fuses">SWITCHES &amp; FUSES</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Technical Specification / Description *</label>
+            <textarea id="form-description" rows="3" required placeholder="Detailed specifications, voltage, tolerance, aerospace application..." class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Stock Quantity</label>
+              <input type="number" id="form-stock" min="0" value="10" class="w-full px-3 py-2 text-xs font-mono bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Stock Location</label>
+              <input type="text" id="form-location" value="Ready Stock (Delhi)" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Delivery Timeframe</label>
+              <input type="text" id="form-delivery" value="Immediate Dispatch" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Mil-Spec Compliance</label>
+              <input type="text" id="form-compliance" value="MIL-STD-883 / ISO 9001" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: IMAGE MANAGER -->
+        <div id="tab-content-image" class="space-y-6 hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Upload Component Photo to Server</label>
+                <input type="file" id="image-file-input" accept="image/*" class="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-[2px] file:border-0 file:text-xs file:font-semibold file:bg-brandDark file:text-brandGold hover:file:bg-brandNavy cursor-pointer" />
+                <p id="upload-status" class="text-[11px] text-gray-500 font-mono mt-1">Uploaded directly to Node.js /uploads directory</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Or Direct Image URL / Path</label>
+                <input type="text" id="form-image" placeholder="/assets/products/... or http://..." class="w-full px-3 py-2 text-xs font-mono bg-white border border-[#132333]/20 rounded-[2px]" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Image Live Preview</label>
+              <div class="h-44 bg-gray-100 border border-[#132333]/15 rounded-[2px] flex items-center justify-center overflow-hidden">
+                <img id="image-preview" src="" alt="Component preview" class="w-full h-full object-contain hidden" />
+                <span id="image-preview-empty" class="text-xs text-gray-400 font-mono">No Image Attached</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: SEO SUITE -->
+        <div id="tab-content-seo" class="space-y-4 hidden">
+          <div class="flex items-center justify-between pb-2 border-b border-[#132333]/10">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-brandDark">SEO Metadata Configurations</h3>
+              <p class="text-[11px] text-[#68717A]">Optimized for Google SERP, Rich Snippets, and Social Sharing</p>
+            </div>
+            <button type="button" id="btn-autofill-seo" class="px-3 py-1 bg-brandDark text-brandGold text-xs font-mono font-bold uppercase rounded-[2px]">
+              &amp; Auto-Generate Tags
+            </button>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-bold uppercase tracking-wider text-brandDark">Meta Title</label>
+              <span id="counter-title" class="text-[11px] font-mono text-gray-500">0/60 chars</span>
+            </div>
+            <input type="text" id="form-metaTitle" placeholder="Part Number - Category | Trinex Systems LLP" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]" />
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-bold uppercase tracking-wider text-brandDark">Meta Description</label>
+              <span id="counter-desc" class="text-[11px] font-mono text-gray-500">0/160 chars</span>
+            </div>
+            <textarea id="form-metaDescription" rows="2" placeholder="Search engine snippet summary..." class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">URL Slug (Permalink)</label>
+              <input type="text" id="form-slug" placeholder="e.g. tpp-95-40-400-transformer" class="w-full px-3 py-2 text-xs font-mono bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Robots Directive</label>
+              <select id="form-robots" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]">
+                <option value="index, follow">index, follow (Default)</option>
+                <option value="noindex, follow">noindex, follow</option>
+                <option value="index, nofollow">index, nofollow</option>
+                <option value="noindex, nofollow">noindex, nofollow</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Meta Keywords (Comma separated)</label>
+            <input type="text" id="form-metaKeywords" placeholder="mil-spec, defence electronics, connectors, aerospace" class="w-full px-3 py-2 text-xs bg-white border border-[#132333]/20 rounded-[2px]" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[#132333]/10">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Canonical URL</label>
+              <input type="text" id="form-canonicalUrl" placeholder="https://trinexsystems.com/products/..." class="w-full px-3 py-2 text-xs font-mono bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-brandDark mb-1">Open Graph (og:image) URL</label>
+              <input type="text" id="form-ogImage" placeholder="Defaults to Product Image" class="w-full px-3 py-2 text-xs font-mono bg-white border border-[#132333]/20 rounded-[2px]" />
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: PREVIEW -->
+        <div id="tab-content-preview" class="space-y-6 hidden">
+          <!-- Google SERP Simulation -->
+          <div class="p-4 bg-white border border-[#132333]/15 rounded-[3px]">
+            <div class="text-[11px] font-mono text-gray-500 font-bold uppercase mb-2">Google Search Result Preview</div>
+            <div class="max-w-xl font-sans space-y-1">
+              <div class="text-[12px] text-gray-700 truncate" id="serp-url">https://trinexsystems.com &rsaquo; products &rsaquo; part</div>
+              <div class="text-[18px] text-[#1a0dab] font-normal leading-snug cursor-pointer line-clamp-1" id="serp-title">Product Title</div>
+              <div class="text-[13px] text-gray-600 line-clamp-2" id="serp-desc">Product snippet description will render here.</div>
+            </div>
+          </div>
+
+          <!-- Schema.org JSON-LD structured data preview -->
+          <div class="p-4 bg-brandDark text-white font-mono text-xs rounded-[3px]">
+            <div class="text-[11px] text-brandGold uppercase tracking-wider font-bold mb-2">Schema.org / Product (JSON-LD) Output</div>
+            <pre id="schema-preview" class="p-2 bg-brandNavy text-white/80 overflow-x-auto rounded-[2px] text-[11px] leading-relaxed">{}</pre>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="pt-4 border-t border-[#132333]/10 flex items-center justify-end gap-3 flex-shrink-0">
+          <button type="button" id="btn-cancel-modal" class="px-4 py-2 border border-[#132333]/20 text-xs font-bold uppercase rounded-[2px]">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-brandGold hover:bg-brandGoldLight text-brandDark text-xs font-bold uppercase tracking-wider rounded-[2px] font-mono">
+            Save &amp; Publish Product
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="delete-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-brandOffWhite border border-[#132333]/20 w-full max-w-md rounded-[3px] shadow-2xl p-6 space-y-4">
+      <h3 class="text-sm font-bold uppercase text-red-600">Confirm Product Removal</h3>
+      <p class="text-xs text-[#132333] leading-relaxed">Are you sure you want to delete part number <strong id="delete-part-name" class="font-mono"></strong>? This will remove the item and its SEO configurations from the catalog.</p>
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#132333]/10">
+        <button id="btn-cancel-delete" class="px-3 py-1.5 border border-[#132333]/20 text-xs uppercase font-bold rounded-[2px]">Cancel</button>
+        <button id="btn-confirm-delete" class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs uppercase font-bold rounded-[2px]">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-brandDark text-white border border-brandGold/40 px-4 py-3 rounded-[3px] shadow-xl text-xs font-mono flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-brandGold"></span>
+    <span id="toast-message">Operation successful</span>
+  </div>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
