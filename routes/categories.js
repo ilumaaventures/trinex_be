@@ -32,9 +32,13 @@ router.get("/", async (req, res) => {
  */
 router.patch("/:id/visibility", async (req, res) => {
   try {
-    const updated = await toggleCategoryVisibility(req.params.id);
+    const { id } = req.params;
+    if (!id || id === "undefined" || id === "null") {
+      return res.status(400).json({ success: false, message: "Valid category ID is required" });
+    }
+    const updated = await toggleCategoryVisibility(id);
     if (!updated) {
-      return res.status(404).json({ success: false, message: "Category not found" });
+      return res.status(404).json({ success: false, message: `Category '${id}' not found` });
     }
     res.json({
       success: true,

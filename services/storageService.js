@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import mongoose from "mongoose";
 import { buildCompleteSeo, slugify, generateSitemapXml, generateRobotsTxt } from "./seoService.js";
 import { Product } from "../models/Product.js";
 import { Category } from "../models/Category.js";
@@ -299,6 +300,15 @@ export async function readProducts(queryFilter = {}) {
 
       if (queryFilter.visibleOnly === "true" || queryFilter.visibleOnly === true) {
         mongoFilter.isHidden = { $ne: true };
+        try {
+          const hiddenCats = await Category.find({ isHidden: true }, { id: 1 });
+          if (hiddenCats.length > 0) {
+            const hiddenKeys = hiddenCats.map((c) => c.id);
+            mongoFilter.categoryKey = { $nin: hiddenKeys };
+          }
+        } catch (catErr) {
+          console.warn("[MongoDB] Error querying hidden categories:", catErr.message);
+        }
       }
 
       if (queryFilter.category && queryFilter.category !== "all") {
@@ -341,6 +351,16 @@ export async function readProducts(queryFilter = {}) {
   try {
     const raw = await fs.readFile(PRODUCTS_FILE, "utf-8");
     let items = JSON.parse(raw);
+
+    if (queryFilter.visibleOnly === "true" || queryFilter.visibleOnly === true) {
+      try {
+        const cats = await readCategories();
+        const hiddenCatIds = new Set(cats.filter((c) => c.isHidden).map((c) => c.id));
+        items = items.filter((p) => !p.isHidden && !hiddenCatIds.has(p.categoryKey));
+      } catch {
+        items = items.filter((p) => !p.isHidden);
+      }
+    }
 
     if (queryFilter.category && queryFilter.category !== "all") {
       items = items.filter((p) => p.categoryKey === queryFilter.category);
@@ -727,12 +747,16 @@ export async function readCategories() {
         ]);
         const countMap = {};
         counts.forEach((c) => {
-          if (c._id) countMap[c._id] = c.count;
+          if (c._id) {
+            countMap[String(c._id).toLowerCase()] = c.count;
+            countMap[String(c._id).toLowerCase().replace(/s$/, "")] = c.count;
+          }
         });
 
         return cats.map((c) => {
           const json = c.toJSON();
-          json.count = countMap[json.id] ?? json.count ?? 0;
+          const k = String(json.id || "").toLowerCase();
+          json.count = countMap[k] ?? countMap[k.replace(/s$/, "")] ?? json.count ?? 0;
           return json;
         });
       }
@@ -743,7 +767,28 @@ export async function readCategories() {
 
   try {
     const raw = await fs.readFile(CATEGORIES_FILE, "utf-8");
-    return JSON.parse(raw);
+    const cats = JSON.parse(raw);
+    try {
+      const prodRaw = await fs.readFile(PRODUCTS_FILE, "utf-8");
+      const prods = JSON.parse(prodRaw);
+      const countMap = {};
+      prods.forEach((p) => {
+        if (p.categoryKey) {
+          const k = String(p.categoryKey).toLowerCase();
+          countMap[k] = (countMap[k] || 0) + 1;
+          countMap[k.replace(/s$/, "")] = (countMap[k.replace(/s$/, "")] || 0) + 1;
+        }
+      });
+      return cats.map((c) => {
+        const k = String(c.id || "").toLowerCase();
+        return {
+          ...c,
+          count: countMap[k] ?? countMap[k.replace(/s$/, "")] ?? c.count ?? 0,
+        };
+      });
+    } catch {
+      return cats;
+    }
   } catch {
     return [];
   }
@@ -793,14 +838,29 @@ export async function createCategory(catData) {
 }
 
 export async function updateCategory(id, catData) {
+  if (!id) return null;
+  const strId = String(id).trim();
+
   if (isMongoConnected()) {
     try {
-      const updated = await Category.findOneAndUpdate(
-        { id },
+      const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const query = isObjectId
+        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
+        : { id: new RegExp(`^${strId}$`, "i") };
+
+      let updated = await Category.findOneAndUpdate(
+        query,
         { $set: catData },
         { new: true }
       );
       if (updated) {
+        // If slug changed, cascade update to products
+        if (catData.id && String(catData.id).toLowerCase() !== strId.toLowerCase()) {
+          await Product.updateMany(
+            { categoryKey: new RegExp(`^${strId}$`, "i") },
+            { $set: { categoryKey: catData.id } }
+          );
+        }
         await syncLocalBackups();
         await refreshSitemapFiles();
         return updated.toJSON();
@@ -811,7 +871,9 @@ export async function updateCategory(id, catData) {
   }
 
   const cats = await readCategories();
-  const idx = cats.findIndex((c) => c.id === id);
+  const idx = cats.findIndex(
+    (c) => String(c.id).toLowerCase() === strId.toLowerCase() || String(c._id) === strId
+  );
   if (idx >= 0) {
     cats[idx] = { ...cats[idx], ...catData };
     await fs.writeFile(CATEGORIES_FILE, JSON.stringify(cats, null, 2), "utf-8");
@@ -822,20 +884,32 @@ export async function updateCategory(id, catData) {
 }
 
 export async function deleteCategory(id) {
+  if (!id) return false;
+  const strId = String(id).trim();
+
   if (isMongoConnected()) {
     try {
-      await Category.deleteOne({ id });
-      console.log(`[MongoDB] Deleted category '${id}'`);
-      await syncLocalBackups();
-      await refreshSitemapFiles();
-      return true;
+      const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const query = isObjectId
+        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
+        : { id: new RegExp(`^${strId}$`, "i") };
+
+      const res = await Category.findOneAndDelete(query);
+      if (res) {
+        console.log(`[MongoDB] Deleted category '${id}'`);
+        await syncLocalBackups();
+        await refreshSitemapFiles();
+        return true;
+      }
     } catch (err) {
       console.error("[MongoDB] Failed to delete category:", err.message);
     }
   }
 
   const cats = await readCategories();
-  const filtered = cats.filter((c) => c.id !== id);
+  const filtered = cats.filter(
+    (c) => String(c.id).toLowerCase() !== strId.toLowerCase() && String(c._id) !== strId
+  );
   await fs.writeFile(CATEGORIES_FILE, JSON.stringify(filtered, null, 2), "utf-8");
   await refreshSitemapFiles();
   return true;
@@ -849,21 +923,36 @@ export async function toggleProductVisibility(id) {
 }
 
 export async function getCategoryById(id) {
+  if (!id) return null;
+  const strId = String(id).trim();
+
   if (isMongoConnected()) {
     try {
-      const cat = await Category.findOne({ id });
+      const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const query = isObjectId
+        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
+        : { id: new RegExp(`^${strId}$`, "i") };
+
+      const cat = await Category.findOne(query);
       if (cat) return cat.toJSON();
     } catch (err) {
       console.warn("[MongoDB] Error finding category:", err.message);
     }
   }
   const cats = await readCategories();
-  return cats.find((c) => c.id === id) || null;
+  return (
+    cats.find(
+      (c) => String(c.id).toLowerCase() === strId.toLowerCase() || String(c._id) === strId
+    ) || null
+  );
 }
 
 export async function toggleCategoryVisibility(id) {
+  if (!id || id === "undefined" || id === "null") {
+    throw new Error("Valid category ID is required");
+  }
   const cat = await getCategoryById(id);
-  if (!cat) throw new Error("Category not found");
+  if (!cat) throw new Error(`Category '${id}' not found`);
   const newHiddenState = !cat.isHidden;
   return updateCategory(id, { isHidden: newHiddenState });
 }

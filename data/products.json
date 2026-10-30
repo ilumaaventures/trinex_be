@@ -71,73 +71,6 @@
       "score": 88,
       "checks": {
         "hasTitle": true,
-        "hasDescription": false,
-        "hasSlug": true,
-        "hasKeywords": true,
-        "hasFocusKeyword": true,
-        "keywordInTitle": true,
-        "keywordInDesc": true,
-        "hasImage": true
-      },
-      "status": "EXCELLENT"
-    },
-    "_id": "6ae314b1291b7dadf5755fb0",
-    "partNumber": "dummy dummy",
-    "category": "DEMO",
-    "categoryKey": "demo",
-    "description": "DUMMY DUMMY DUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMY",
-    "stock": 5,
-    "location": "Ready Stock (noida)",
-    "delivery": "Immediate Dispatch",
-    "compliance": "MIL-STD-883 / ISO 9001",
-    "image": "https://res.cloudinary.com/dtzxn6wrm/image/upload/v1793266842/trinix/file_zbu43w.png",
-    "isHidden": false,
-    "focusKeyword": "dummy dummy",
-    "metaTitle": "dummy dummy - DEMO (MIL-STD-883 / ISO 9001) | Trinex Systems LLP",
-    "metaDescription": "dummy dummy DEMO (MIL-STD-883 / ISO 9001). DUMMY DUMMY DUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMY. In stock with immediate dispatch from Trinex Systems LLP.",
-    "metaKeywords": "dummy dummy, DEMO, MIL-STD-883 / ISO 9001, defence components, mil-spec, India defence electronics, aerospace parts, Make in India",
-    "slug": "dummy-dummy-demo",
-    "canonicalUrl": "https://trinexsystems.com/products/dummy-dummy-demo",
-    "robots": "index, follow",
-    "ogTitle": "dummy dummy (DEMO) - Trinex Systems Defence Stock",
-    "ogDescription": "DUMMY DUMMY DUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY",
-    "ogImage": "/assets/products/transformers_chokes.jpg",
-    "structuredData": {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": "dummy dummy - DEMO (MIL-STD-883 / ISO 9001) | Trinex Systems LLP",
-      "image": [
-        "/assets/products/transformers_chokes.jpg"
-      ],
-      "description": "dummy dummy DEMO (MIL-STD-883 / ISO 9001). DUMMY DUMMY DUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMYDUMMY DUMMY. In stock with immediate dispatch from Trinex Systems LLP.",
-      "sku": "dummy dummy",
-      "mpn": "dummy dummy",
-      "brand": {
-        "@type": "Brand",
-        "name": "Trinex Systems LLP"
-      },
-      "category": "DEMO",
-      "offers": {
-        "@type": "Offer",
-        "url": "https://trinexsystems.com/products/dummy-dummy-demo",
-        "priceCurrency": "INR",
-        "availability": "https://schema.org/InStock",
-        "itemCondition": "https://schema.org/NewCondition",
-        "seller": {
-          "@type": "Organization",
-          "name": "Trinex Systems LLP"
-        }
-      }
-    },
-    "createdAt": "2026-10-29T09:41:04.700Z",
-    "updatedAt": "2026-10-29T09:41:04.700Z",
-    "id": "6ae314b1291b7dadf5755fb0"
-  },
-  {
-    "seoHealth": {
-      "score": 88,
-      "checks": {
-        "hasTitle": true,
         "hasDescription": true,
         "hasSlug": true,
         "hasKeywords": true,
@@ -6153,6 +6086,69 @@
   },
   {
     "seoHealth": {
+      "score": 75,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": false,
+        "hasSlug": true,
+        "hasKeywords": true,
+        "hasFocusKeyword": true,
+        "keywordInTitle": true,
+        "keywordInDesc": false,
+        "hasImage": true
+      },
+      "status": "GOOD"
+    },
+    "_id": "6ae2e5a2b7dbaba5e2dd6132",
+    "partNumber": "SMR-100K-0.1%",
+    "category": "RESISTOR",
+    "categoryKey": "resistors",
+    "description": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient",
+    "stock": 850,
+    "location": "Ready Stock (Delhi)",
+    "delivery": "Immediate Dispatch",
+    "compliance": "MIL-PRF-55342",
+    "image": "/assets/products/resistors.jpg",
+    "isHidden": false,
+    "focusKeyword": "SMR-100K-0.1%",
+    "metaTitle": "SMR-100K-0.1% - RESISTOR | Trinex Systems LLP",
+    "metaDescription": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient. Sourced with mission-ready compliance & immediate dispatch from Trinex Systems LLP.",
+    "metaKeywords": "SMR-100K-0.1%, RESISTOR, defence electronics, aerospace grade, mil-spec, Make in India, indigenous systems",
+    "slug": "smr-100k-01-resistor",
+    "canonicalUrl": "https://trinexsystems.com/products/smr-100k-01-resistor",
+    "robots": "index, follow",
+    "ogTitle": "SMR-100K-0.1% - RESISTOR | Trinex Systems LLP",
+    "ogDescription": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient. Sourced with mission-ready compliance & immediate dispatch from Trinex Systems LLP.",
+    "ogImage": "/assets/products/resistors.jpg",
+    "structuredData": {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "SMR-100K-0.1% - RESISTOR | Trinex Systems LLP",
+      "image": [
+        "/assets/products/resistors.jpg"
+      ],
+      "description": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient. Sourced with mission-ready compliance & immediate dispatch from Trinex Systems LLP.",
+      "sku": "SMR-100K-0.1%",
+      "mpn": "SMR-100K-0.1%",
+      "brand": {
+        "@type": "Brand",
+        "name": "Trinex Systems LLP"
+      },
+      "category": "RESISTOR",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://trinexsystems.com/products/smr-100k-01-resistor",
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      }
+    },
+    "createdAt": "2026-10-29T06:20:18.994Z",
+    "updatedAt": "2026-10-29T06:20:18.994Z",
+    "id": "6ae2e5a2b7dbaba5e2dd6132"
+  },
+  {
+    "seoHealth": {
       "score": 88,
       "checks": {
         "hasTitle": true,
@@ -6339,69 +6335,6 @@
     "createdAt": "2026-10-29T06:20:18.994Z",
     "updatedAt": "2026-10-29T06:20:18.994Z",
     "id": "6ae2e5a2b7dbaba5e2dd612f"
-  },
-  {
-    "seoHealth": {
-      "score": 75,
-      "checks": {
-        "hasTitle": true,
-        "hasDescription": false,
-        "hasSlug": true,
-        "hasKeywords": true,
-        "hasFocusKeyword": true,
-        "keywordInTitle": true,
-        "keywordInDesc": false,
-        "hasImage": true
-      },
-      "status": "GOOD"
-    },
-    "_id": "6ae2e5a2b7dbaba5e2dd6132",
-    "partNumber": "SMR-100K-0.1%",
-    "category": "RESISTOR",
-    "categoryKey": "resistors",
-    "description": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient",
-    "stock": 850,
-    "location": "Ready Stock (Delhi)",
-    "delivery": "Immediate Dispatch",
-    "compliance": "MIL-PRF-55342",
-    "image": "/assets/products/resistors.jpg",
-    "isHidden": false,
-    "focusKeyword": "SMR-100K-0.1%",
-    "metaTitle": "SMR-100K-0.1% - RESISTOR | Trinex Systems LLP",
-    "metaDescription": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient. Sourced with mission-ready compliance & immediate dispatch from Trinex Systems LLP.",
-    "metaKeywords": "SMR-100K-0.1%, RESISTOR, defence electronics, aerospace grade, mil-spec, Make in India, indigenous systems",
-    "slug": "smr-100k-01-resistor",
-    "canonicalUrl": "https://trinexsystems.com/products/smr-100k-01-resistor",
-    "robots": "index, follow",
-    "ogTitle": "SMR-100K-0.1% - RESISTOR | Trinex Systems LLP",
-    "ogDescription": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient. Sourced with mission-ready compliance & immediate dispatch from Trinex Systems LLP.",
-    "ogImage": "/assets/products/resistors.jpg",
-    "structuredData": {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": "SMR-100K-0.1% - RESISTOR | Trinex Systems LLP",
-      "image": [
-        "/assets/products/resistors.jpg"
-      ],
-      "description": "Ultra-precision metal film resistor, 0.1% tolerance, ultra-low temperature coefficient. Sourced with mission-ready compliance & immediate dispatch from Trinex Systems LLP.",
-      "sku": "SMR-100K-0.1%",
-      "mpn": "SMR-100K-0.1%",
-      "brand": {
-        "@type": "Brand",
-        "name": "Trinex Systems LLP"
-      },
-      "category": "RESISTOR",
-      "offers": {
-        "@type": "Offer",
-        "url": "https://trinexsystems.com/products/smr-100k-01-resistor",
-        "priceCurrency": "INR",
-        "availability": "https://schema.org/InStock",
-        "itemCondition": "https://schema.org/NewCondition"
-      }
-    },
-    "createdAt": "2026-10-29T06:20:18.994Z",
-    "updatedAt": "2026-10-29T06:20:18.994Z",
-    "id": "6ae2e5a2b7dbaba5e2dd6132"
   },
   {
     "seoHealth": {

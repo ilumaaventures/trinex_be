@@ -151,8 +151,12 @@ export function generateSitemapXml({ products = [], categories = [], baseUrl = "
       lastmod: c.updatedAt ? new Date(c.updatedAt).toISOString().split("T")[0] : now,
     }));
 
+  const hiddenCategoryKeys = new Set(
+    categories.filter((c) => c.isHidden).map((c) => String(c.id || c.key || "").toLowerCase())
+  );
+
   const productUrls = products
-    .filter((p) => !p.isHidden)
+    .filter((p) => !p.isHidden && !hiddenCategoryKeys.has(String(p.categoryKey || "").toLowerCase()))
     .map((p) => {
       const slug = p.slug || slugify(`${p.partNumber}-${p.category}`);
       return {
