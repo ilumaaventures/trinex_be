@@ -508,8 +508,10 @@ export async function updateProduct(id, payload) {
       }
       if (updatedDoc) {
         console.log(`[MongoDB] Updated product SKU: ${updatedDoc.partNumber}`);
-        await syncLocalBackups();
-        await refreshSitemapFiles();
+        setImmediate(() => {
+          syncLocalBackups().catch((e) => console.warn("[Backup] Background sync error:", e.message));
+          refreshSitemapFiles().catch((e) => console.warn("[Sitemap] Background refresh error:", e.message));
+        });
         return updatedDoc.toJSON();
       }
     } catch (err) {
@@ -861,8 +863,10 @@ export async function updateCategory(id, catData) {
             { $set: { categoryKey: catData.id } }
           );
         }
-        await syncLocalBackups();
-        await refreshSitemapFiles();
+        setImmediate(() => {
+          syncLocalBackups().catch((e) => console.warn("[Backup] Background sync error:", e.message));
+          refreshSitemapFiles().catch((e) => console.warn("[Sitemap] Background refresh error:", e.message));
+        });
         return updated.toJSON();
       }
     } catch (err) {
@@ -877,7 +881,9 @@ export async function updateCategory(id, catData) {
   if (idx >= 0) {
     cats[idx] = { ...cats[idx], ...catData };
     await fs.writeFile(CATEGORIES_FILE, JSON.stringify(cats, null, 2), "utf-8");
-    await refreshSitemapFiles();
+    setImmediate(() => {
+      refreshSitemapFiles().catch((e) => console.warn("[Sitemap] Background refresh error:", e.message));
+    });
     return cats[idx];
   }
   return null;
@@ -897,8 +903,10 @@ export async function deleteCategory(id) {
       const res = await Category.findOneAndDelete(query);
       if (res) {
         console.log(`[MongoDB] Deleted category '${id}'`);
-        await syncLocalBackups();
-        await refreshSitemapFiles();
+        setImmediate(() => {
+          syncLocalBackups().catch((e) => console.warn("[Backup] Background sync error:", e.message));
+          refreshSitemapFiles().catch((e) => console.warn("[Sitemap] Background refresh error:", e.message));
+        });
         return true;
       }
     } catch (err) {

@@ -1,18 +1,18 @@
 [
   {
     "seoHealth": {
-      "score": 50,
+      "score": 100,
       "checks": {
-        "hasTitle": false,
-        "hasDescription": false,
+        "hasTitle": true,
+        "hasDescription": true,
         "hasSlug": true,
         "hasKeywords": true,
         "hasFocusKeyword": true,
-        "keywordInTitle": false,
-        "keywordInDesc": false,
+        "keywordInTitle": true,
+        "keywordInDesc": true,
         "hasImage": true
       },
-      "status": "NEEDS_OPTIMIZATION"
+      "status": "EXCELLENT"
     },
     "_id": "6ae3524e5336a99392570d0f",
     "partNumber": "Sample product",
@@ -25,36 +25,36 @@
     "compliance": "MIL-STD-883 / ISO 9001",
     "image": "/assets/products/transformers_chokes.jpg",
     "isHidden": false,
-    "focusKeyword": "Sample product",
-    "metaTitle": "rqiwueyroiuyew",
-    "metaDescription": "iweuryoiqweuyr",
-    "metaKeywords": "Sample product, DEMO, MIL-STD-883 / ISO 9001, defence electronics, aerospace grade, mil-spec, Make in India, indigenous systems",
-    "slug": "sample-productsample-productsample-product",
-    "canonicalUrl": "https://trinexsystems.com/products/Sample productSample productSample product",
+    "focusKeyword": "Component",
+    "metaTitle": "Component - Defence Electronics | Trinex Systems LLP",
+    "metaDescription": "Component Defence Electronics. Precision defence and aerospace component.. In stock with immediate dispatch from Trinex Systems LLP.",
+    "metaKeywords": "Component, Defence Electronics, , defence electronics, aerospace grade, mil-spec, Make in India, indigenous systems",
+    "slug": "component-defence-electronics",
+    "canonicalUrl": "https://trinexsystems.com/products/component-defence-electronics",
     "robots": "index, follow",
-    "ogTitle": "rqiwueyroiuyew",
-    "ogDescription": "iweuryoiqweuyr",
-    "ogImage": "/assets/products/transformers_chokes.jpg",
+    "ogTitle": "Component - Defence Electronics | Trinex Systems LLP",
+    "ogDescription": "Component Defence Electronics. Precision defence and aerospace component.. In stock with immediate dispatch from Trinex Systems LLP.",
+    "ogImage": "https://trinexsystems.com/assets/hero-bg.jpg",
     "structuredData": {
       "@context": "https://schema.org/",
       "@type": "Product",
-      "name": "rqiwueyroiuyew",
+      "name": "Component - Defence Electronics | Trinex Systems LLP",
       "image": [
-        "/assets/products/transformers_chokes.jpg"
+        "https://trinexsystems.com/assets/hero-bg.jpg"
       ],
-      "description": "iweuryoiqweuyr",
-      "sku": "Sample product",
-      "mpn": "Sample product",
+      "description": "Component Defence Electronics. Precision defence and aerospace component.. In stock with immediate dispatch from Trinex Systems LLP.",
+      "sku": "Component",
+      "mpn": "Component",
       "brand": {
         "@type": "Brand",
         "name": "Trinex Systems LLP"
       },
-      "category": "DEMO",
+      "category": "Defence Electronics",
       "offers": {
         "@type": "Offer",
-        "url": "https://trinexsystems.com/products/Sample productSample productSample product",
+        "url": "https://trinexsystems.com/products/component-defence-electronics",
         "priceCurrency": "INR",
-        "availability": "https://schema.org/InStock",
+        "availability": "https://schema.org/PreOrder",
         "itemCondition": "https://schema.org/NewCondition",
         "seller": {
           "@type": "Organization",
@@ -63,7 +63,7 @@
       }
     },
     "createdAt": "2026-10-29T14:03:58.214Z",
-    "updatedAt": "2026-10-29T14:03:58.214Z",
+    "updatedAt": "2026-10-30T07:25:54.248Z",
     "id": "6ae3524e5336a99392570d0f"
   },
   {
