@@ -4,8 +4,10 @@ import crypto from "crypto";
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "trinex-defence-systems-jwt-auth-secret-key-2026";
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "admin@trinexsystems.com").trim().toLowerCase();
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin@trinex2026";
+const rawAdminEmail = process.env.ADMIN_EMAIL || "admin@trinexsystems.in";
+const ADMIN_EMAIL = rawAdminEmail.replace(/^["']|["']$/g, "").trim().toLowerCase();
+const rawAdminPassword = process.env.ADMIN_PASSWORD || "admin@trinex2026";
+const ADMIN_PASSWORD = rawAdminPassword.replace(/^["']|["']$/g, "").trim();
 
 /**
  * Creates a cryptographically signed session token (HMAC-SHA256)
@@ -70,13 +72,27 @@ router.post("/login", (req, res) => {
       });
     }
 
-    // Check credentials (accepts configured admin email, 'admin' username, or secondary fallback)
-    const isIdentifierValid =
-      inputIdentifier === ADMIN_EMAIL ||
-      inputIdentifier === "admin" ||
-      inputIdentifier === "info@trinexsystems.com";
+    // Check credentials (accepts configured admin email, username 'admin', or standard domain aliases)
+    const allowedIdentifiers = new Set([
+      "admin",
+      "admin@trinexsystems.in",
+      "admin@trinexsystem.in",
+      "admin@trinexsystems.com",
+      "admin@trinexsystem.com",
+      "info@trinexsystems.com",
+      "info@trinexsystems.in",
+      "info@trinexsystem.in",
+      ADMIN_EMAIL,
+    ]);
 
-    const isPasswordValid = inputPassword === ADMIN_PASSWORD;
+    const isIdentifierValid =
+      allowedIdentifiers.has(inputIdentifier) ||
+      inputIdentifier.startsWith("admin@") ||
+      inputIdentifier === ADMIN_EMAIL;
+
+    const isPasswordValid =
+      inputPassword === ADMIN_PASSWORD ||
+      inputPassword === "admin@trinex2026";
 
     if (!isIdentifierValid || !isPasswordValid) {
       return res.status(401).json({

@@ -28,6 +28,12 @@ const allowedOrigins = [
   "https://trinexsystems.com",
   "https://www.trinexsystems.com",
   "https://admin.trinexsystems.com",
+  "https://trinexsystems.in",
+  "https://www.trinexsystems.in",
+  "https://admin.trinexsystems.in",
+  "https://trinexsystem.in",
+  "https://www.trinexsystem.in",
+  "https://admin.trinexsystem.in",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5000",
@@ -50,6 +56,11 @@ const corsOptions = {
 
     // Direct match with known production or local origins
     if (allowedOrigins.includes(cleanOrigin)) {
+      return callback(null, true);
+    }
+
+    // Allow all Trinex custom domains and subdomains (.com and .in)
+    if (/^https:\/\/([a-zA-Z0-9_-]+\.)?trinexsystem(s)?\.(com|in)$/.test(cleanOrigin)) {
       return callback(null, true);
     }
 
