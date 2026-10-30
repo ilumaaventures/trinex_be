@@ -939,10 +939,45 @@ export async function deleteCategory(id) {
 }
 
 export async function toggleProductVisibility(id) {
-  const product = await getProductById(id);
-  if (!product) throw new Error("Product not found");
-  const newHiddenState = !product.isHidden;
-  return updateProduct(id, { isHidden: newHiddenState });
+  if (!id) throw new Error("Product ID is required");
+  const strId = String(id).trim();
+
+  if (isMongoConnected()) {
+    try {
+      let doc = null;
+      if (mongoose.Types.ObjectId.isValid(strId) && strId.length === 24) {
+        doc = await Product.findById(strId);
+      }
+      if (!doc) {
+        doc = await Product.findOne({ $or: [{ id: strId }, { partNumber: strId }] });
+      }
+      if (doc) {
+        doc.isHidden = !doc.isHidden;
+        doc.updatedAt = new Date().toISOString();
+        await doc.save();
+
+        setImmediate(() => {
+          syncLocalBackups().catch(() => {});
+          refreshSitemapFiles().catch(() => {});
+        });
+
+        return doc.toJSON();
+      }
+    } catch (err) {
+      console.warn("[MongoDB] Toggle product visibility error:", err.message);
+    }
+  }
+
+  // File fallback
+  const items = await readProducts();
+  const idx = items.findIndex((p) => String(p.id) === strId || String(p._id) === strId);
+  if (idx === -1) throw new Error("Product not found");
+
+  items[idx].isHidden = !items[idx].isHidden;
+  items[idx].updatedAt = new Date().toISOString();
+  await fs.writeFile(PRODUCTS_FILE, JSON.stringify(items, null, 2), "utf-8");
+  setImmediate(() => refreshSitemapFiles().catch(() => {}));
+  return items[idx];
 }
 
 export async function getCategoryById(id) {
@@ -974,9 +1009,42 @@ export async function toggleCategoryVisibility(id) {
   if (!id || id === "undefined" || id === "null") {
     throw new Error("Valid category ID is required");
   }
-  const cat = await getCategoryById(id);
-  if (!cat) throw new Error(`Category '${id}' not found`);
-  const newHiddenState = !cat.isHidden;
-  return updateCategory(id, { isHidden: newHiddenState });
+  const strId = String(id).trim();
+
+  if (isMongoConnected()) {
+    try {
+      const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const query = isObjectId
+        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
+        : { id: new RegExp(`^${strId}$`, "i") };
+
+      const cat = await Category.findOne(query);
+      if (cat) {
+        cat.isHidden = !cat.isHidden;
+        await cat.save();
+
+        setImmediate(() => {
+          syncLocalBackups().catch(() => {});
+          refreshSitemapFiles().catch(() => {});
+        });
+
+        return cat.toJSON();
+      }
+    } catch (err) {
+      console.warn("[MongoDB] Toggle category error:", err.message);
+    }
+  }
+
+  // File fallback
+  const cats = await readCategories();
+  const idx = cats.findIndex(
+    (c) => String(c.id).toLowerCase() === strId.toLowerCase() || String(c._id) === strId
+  );
+  if (idx === -1) throw new Error(`Category '${id}' not found`);
+
+  cats[idx].isHidden = !cats[idx].isHidden;
+  await fs.writeFile(CATEGORIES_FILE, JSON.stringify(cats, null, 2), "utf-8");
+  setImmediate(() => refreshSitemapFiles().catch(() => {}));
+  return cats[idx];
 }
 
