@@ -8,6 +8,7 @@ import productsRouter from "./routes/products.js";
 import categoriesRouter from "./routes/categories.js";
 import uploadRouter from "./routes/upload.js";
 import seoRouter from "./routes/seo.js";
+import authRouter from "./routes/auth.js";
 import { initStorage, readProducts, readCategories } from "./services/storageService.js";
 import { generateSitemapXml, generateRobotsTxt } from "./services/seoService.js";
 import { connectDB } from "./config/db.js";
@@ -124,6 +125,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "public")));
 
 // API Routes
+app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/upload", uploadRouter);
