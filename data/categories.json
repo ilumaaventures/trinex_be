@@ -7,9 +7,9 @@
     "description": "High-stability precision metal-film, wirewound, and SMD chip resistors for defence & aerospace applications.",
     "image": "/assets/products/resistors.jpg",
     "count": 36,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.505Z",
-    "updatedAt": "2026-10-30T06:27:44.792Z"
+    "updatedAt": "2026-10-30T06:27:44.792Z",
+    "isHidden": false
   },
   {
     "_id": "6ae0925dca61ede5104d6cd5",
@@ -19,11 +19,12 @@
     "description": "Mil-spec tantalum, high-voltage film, and precision multi-layer ceramic capacitors.",
     "image": "/assets/products/capacitors.jpg",
     "count": 7,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.510Z",
-    "updatedAt": "2026-10-30T06:42:04.289Z"
+    "updatedAt": "2026-10-30T06:42:04.289Z",
+    "isHidden": false
   },
   {
+    "isHidden": false,
     "_id": "6ae0925dca61ede5104d6cd6",
     "id": "microcircuits",
     "name": "MICROCIRCUITS",
@@ -31,11 +32,11 @@
     "description": "Ceramic hermetic and commercial digital logic circuits, counters, and tactical embedded ICs.",
     "image": "/assets/products/microcircuits.jpg",
     "count": 6,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.510Z",
     "updatedAt": "2026-10-27T12:00:29.510Z"
   },
   {
+    "isHidden": false,
     "_id": "6ae0925dca61ede5104d6cd7",
     "id": "transistors-diodes",
     "name": "DIODES & TRANSISTORS",
@@ -43,7 +44,6 @@
     "description": "High-reliability metal-can transistors (TO-3, TO-39), precision Zener diodes, and voltage reference stabilitrons.",
     "image": "/assets/products/diodes_transistors.jpg",
     "count": 14,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.510Z",
     "updatedAt": "2026-10-27T12:00:29.510Z"
   },
@@ -55,11 +55,12 @@
     "description": "Hermetic high-density circular and rectangular connectors with gold-plated pins (31-Pin, 61-Pin).",
     "image": "/assets/products/connectors.jpg",
     "count": 2,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.510Z",
-    "updatedAt": "2026-10-27T13:20:39.811Z"
+    "updatedAt": "2026-10-27T13:20:39.811Z",
+    "isHidden": false
   },
   {
+    "isHidden": false,
     "_id": "6ae0925dca61ede5104d6cd9",
     "id": "motors",
     "name": "MOTORS & GENERATORS",
@@ -67,7 +68,6 @@
     "description": "Miniature DC servo motors, tachogenerators, and aerospace drive actuators.",
     "image": "/assets/products/motors_generators.jpg",
     "count": 6,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.510Z",
     "updatedAt": "2026-10-27T12:00:29.510Z"
   },
@@ -79,11 +79,12 @@
     "description": "High-frequency pulse transformers, compact modular DC power units, and RF chokes.",
     "image": "/assets/products/transformers_chokes.jpg",
     "count": 6,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.511Z",
-    "updatedAt": "2026-10-30T07:44:11.231Z"
+    "updatedAt": "2026-10-30T07:44:11.231Z",
+    "isHidden": false
   },
   {
+    "isHidden": false,
     "_id": "6ae0925dca61ede5104d6cdb",
     "id": "switches-fuses",
     "name": "SWITCHES & PROTECTION",
@@ -91,7 +92,6 @@
     "description": "Tactical push buttons, micro-switches, cartridge fuse links, panel fuse holders, and indicator lamps.",
     "image": "/assets/products/switches_fuses.jpg",
     "count": 6,
-    "isHidden": false,
     "createdAt": "2026-10-27T12:00:29.511Z",
     "updatedAt": "2026-10-27T12:00:29.511Z"
   },
