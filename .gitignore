@@ -5,7 +5,8 @@ jspm_packages/
 # Environment Variables & Secrets
 .env
 .env.*
-!.env.example
+*.env
+.env.example
 
 # File Uploads & Local Media Cache
 uploads/*
