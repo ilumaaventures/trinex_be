@@ -131,9 +131,9 @@ app.get("/robots.txt", (req, res) => {
   res.send(txt);
 });
 
-// Static Assets
+// Static Assets (index: false prevents serving index.html on root "/")
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // API Routes
 app.use("/api/auth", authRouter);
@@ -142,17 +142,8 @@ app.use("/api/categories", categoriesRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/seo", seoRouter);
 
-// Root route serves the Standalone Admin Dashboard UI
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Health check & API status endpoints
-app.get(["/health", "/api/health", "/api/status", "/api"], (req, res) => {
+// Root & Health check API status endpoints
+app.get(["/", "/health", "/api/health", "/api/status", "/api"], (req, res) => {
   res.json({
     success: true,
     status: "healthy",
@@ -160,6 +151,11 @@ app.get(["/health", "/api/health", "/api/status", "/api"], (req, res) => {
     service: "Trinex Systems Admin & Inventory Engine",
     timestamp: new Date().toISOString()
   });
+});
+
+// Standalone admin console (accessible explicitly via /admin if needed)
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Initialize database storage and start server

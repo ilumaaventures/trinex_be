@@ -58,16 +58,26 @@ router.post("/reset", async (req, res) => {
 
 /**
  * GET /api/products
- * Fetch all products with optional search, category, and location filtering
+ * Fetch products with optional search, category, location, and pagination filtering
  */
 router.get("/", async (req, res) => {
   try {
-    const products = await readProducts(req.query);
+    const result = await readProducts(req.query);
 
+    if (result && result.pagination) {
+      return res.json({
+        success: true,
+        count: result.products.length,
+        data: result.products,
+        pagination: result.pagination,
+      });
+    }
+
+    const products = Array.isArray(result) ? result : [];
     res.json({
       success: true,
       count: products.length,
-      data: products
+      data: products,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

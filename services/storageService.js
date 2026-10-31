@@ -291,9 +291,14 @@ export async function initStorage() {
 }
 
 /**
- * Read Products (Supports search, category, location, stock, and visibility filters)
+ * Read Products (Supports search, category, location, stock, visibility, and pagination)
  */
 export async function readProducts(queryFilter = {}) {
+  const isPaginated = queryFilter.page !== undefined || queryFilter.limit !== undefined;
+  const page = Math.max(1, parseInt(queryFilter.page, 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(queryFilter.limit, 10) || 20));
+  const skip = (page - 1) * limit;
+
   if (isMongoConnected()) {
     try {
       const mongoFilter = {};
@@ -339,6 +344,25 @@ export async function readProducts(queryFilter = {}) {
         ];
       }
 
+      if (isPaginated) {
+        const [totalItems, docs] = await Promise.all([
+          Product.countDocuments(mongoFilter),
+          Product.find(mongoFilter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+        ]);
+        const totalPages = Math.ceil(totalItems / limit) || 1;
+        return {
+          products: docs.map((d) => d.toJSON()),
+          pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+          },
+        };
+      }
+
       const docs = await Product.find(mongoFilter).sort({ createdAt: -1 });
       return docs.map((d) => d.toJSON());
     } catch (err) {
@@ -368,6 +392,12 @@ export async function readProducts(queryFilter = {}) {
     if (queryFilter.location && queryFilter.location !== "all") {
       items = items.filter((p) => p.location?.toLowerCase().includes(queryFilter.location.toLowerCase()));
     }
+    if (queryFilter.minStock !== undefined) {
+      items = items.filter((p) => Number(p.stock) >= Number(queryFilter.minStock));
+    }
+    if (queryFilter.maxStock !== undefined) {
+      items = items.filter((p) => Number(p.stock) <= Number(queryFilter.maxStock));
+    }
     if (queryFilter.search) {
       const q = queryFilter.search.trim().toLowerCase();
       items = items.filter(
@@ -381,10 +411,39 @@ export async function readProducts(queryFilter = {}) {
       );
     }
 
+    if (isPaginated) {
+      const totalItems = items.length;
+      const totalPages = Math.ceil(totalItems / limit) || 1;
+      const paginatedItems = items.slice(skip, skip + limit);
+      return {
+        products: paginatedItems,
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: page,
+          limit,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+      };
+    }
+
     return items;
   } catch (err) {
     console.error("Failed to read products file:", err);
-    return [];
+    return isPaginated
+      ? {
+          products: [],
+          pagination: {
+            totalItems: 0,
+            totalPages: 1,
+            currentPage: page,
+            limit,
+            hasNextPage: false,
+            hasPrevPage: false,
+          },
+        }
+      : [];
   }
 }
 
