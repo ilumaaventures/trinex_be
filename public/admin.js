@@ -169,24 +169,24 @@ function renderProductsTable() {
     const seoScore = p.seoHealth ? p.seoHealth.score : (hasFullSeo ? 100 : 50);
 
     tr.innerHTML = `
-      <td class="py-3.5 px-4 font-mono font-bold text-brandDark whitespace-nowrap">${p.partNumber}</td>
+      <td class="py-3.5 px-4 font-heading font-bold text-brandDark whitespace-nowrap">${p.partNumber}</td>
       <td class="py-3.5 px-4">
         <div class="w-10 h-10 rounded-[2px] border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
-          ${p.image ? `<img src="${p.image}" alt="${p.partNumber}" class="w-full h-full object-cover" />` : '<span class="text-[9px] text-gray-400 font-mono">N/A</span>'}
+          ${p.image ? `<img src="${p.image}" alt="${p.partNumber}" class="w-full h-full object-cover" />` : '<span class="text-[9px] text-gray-400 font-sans">N/A</span>'}
         </div>
       </td>
       <td class="py-3.5 px-4 whitespace-nowrap">
-        <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-[10px] font-mono font-bold text-brandDark rounded-[2px] uppercase">
+        <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-[10px] font-sans font-medium text-brandDark rounded-[2px] uppercase">
           ${p.category || p.categoryKey}
         </span>
       </td>
-      <td class="py-3.5 px-4 max-w-xs text-gray-600 line-clamp-2 leading-relaxed">${p.description || ""}</td>
+      <td class="py-3.5 px-4 max-w-xs text-gray-600 line-clamp-2 leading-relaxed font-sans font-normal">${p.description || ""}</td>
       <td class="py-3.5 px-4 whitespace-nowrap">
-        <div class="font-mono font-bold text-brandDark">${p.stock} units</div>
-        <div class="text-[11px] text-brandGold font-semibold">${p.location || ""}</div>
+        <div class="font-stats font-bold text-brandDark">${p.stock} units</div>
+        <div class="text-[11px] text-brandGold font-sans font-medium">${p.location || ""}</div>
       </td>
       <td class="py-3.5 px-4 whitespace-nowrap">
-        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 ${seoScore >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} border text-[10px] font-mono rounded-[2px]">
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 ${seoScore >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} border text-[10px] font-sans font-medium rounded-[2px]">
           <span class="w-1.5 h-1.5 rounded-full ${seoScore >= 80 ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
           ${seoScore}% SCORE
         </span>
