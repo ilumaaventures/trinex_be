@@ -9,6 +9,7 @@ import categoriesRouter from "./routes/categories.js";
 import uploadRouter from "./routes/upload.js";
 import seoRouter from "./routes/seo.js";
 import authRouter from "./routes/auth.js";
+import contactRouter from "./routes/contact.js";
 import { initStorage, readProducts, readCategories } from "./services/storageService.js";
 import { generateSitemapXml, generateRobotsTxt } from "./services/seoService.js";
 import { connectDB } from "./config/db.js";
@@ -141,6 +142,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/seo", seoRouter);
+app.use("/api/contact", contactRouter);
 
 // Root & Health check API status endpoints
 app.get(["/", "/health", "/api/health", "/api/status", "/api"], (req, res) => {

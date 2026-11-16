@@ -826,15 +826,15 @@ function matchesCategoryProduct(p, catId, catName) {
 export async function readCategories() {
   if (isMongoConnected()) {
     try {
-      const [cats, liveProducts] = await Promise.all([
+      const [cats, allProducts] = await Promise.all([
         Category.find().sort({ createdAt: 1 }),
-        Product.find({ isHidden: { $ne: true } }).lean(),
+        Product.find().lean(),
       ]);
       if (cats.length > 0) {
         return cats.map((c) => {
           const json = c.toJSON();
-          const count = liveProducts.filter((p) =>
-            matchesCategoryProduct(p, json.id || json._id, json.name)
+          const count = allProducts.filter((p) =>
+            !p.isHidden && matchesCategoryProduct(p, json.id || json._id, json.name)
           ).length;
           json.count = count;
           return json;
@@ -851,11 +851,10 @@ export async function readCategories() {
     try {
       const prodRaw = await fs.readFile(PRODUCTS_FILE, "utf-8");
       const prods = JSON.parse(prodRaw);
-      const liveProducts = prods.filter((p) => !p.isHidden);
 
       return cats.map((c) => {
-        const count = liveProducts.filter((p) =>
-          matchesCategoryProduct(p, c.id || c._id, c.name)
+        const count = prods.filter((p) =>
+          !p.isHidden && matchesCategoryProduct(p, c.id || c._id, c.name)
         ).length;
         return {
           ...c,
