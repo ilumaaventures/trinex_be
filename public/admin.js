@@ -105,8 +105,8 @@ function renderCategoryPills() {
   categoriesContainer.innerHTML = "";
 
   const allBtn = document.createElement("button");
-  allBtn.className = `px-2.5 py-1 text-xs font-mono uppercase rounded-[2px] transition-colors ${
-    activeCategory === "all" ? "bg-brandDark text-brandGold font-bold" : "bg-gray-100 text-gray-600 hover:text-black"
+  allBtn.className = `px-2.5 py-1 text-xs font-sans font-semibold uppercase rounded-[2px] transition-colors cursor-pointer ${
+    activeCategory === "all" ? "bg-brandDark text-brandGoldLight font-bold" : "bg-brandSoftGreen/60 text-brandBody hover:text-brandHeading border border-brandBorder"
   }`;
   allBtn.textContent = `All (${allProducts.length})`;
   allBtn.onclick = () => {
@@ -117,10 +117,17 @@ function renderCategoryPills() {
   categoriesContainer.appendChild(allBtn);
 
   allCategories.forEach((cat) => {
-    const count = allProducts.filter((p) => p.categoryKey === cat.id).length;
+    const cId = String(cat.id || "").toLowerCase().trim();
+    const count = allProducts.filter((p) => {
+      const pKey = String(p.categoryKey || "").toLowerCase().trim();
+      if (pKey === cId || pKey.replace(/s$/, "") === cId.replace(/s$/, "")) return true;
+      const pCat = String(p.category || "").toLowerCase().trim();
+      return pCat === cId || pCat.replace(/s$/, "") === cId.replace(/s$/, "");
+    }).length;
+
     const btn = document.createElement("button");
-    btn.className = `px-2.5 py-1 text-xs font-mono uppercase rounded-[2px] transition-colors ${
-      activeCategory === cat.id ? "bg-brandDark text-brandGold font-bold" : "bg-gray-100 text-gray-600 hover:text-black"
+    btn.className = `px-2.5 py-1 text-xs font-sans font-semibold uppercase rounded-[2px] transition-colors cursor-pointer ${
+      activeCategory === cat.id ? "bg-brandDark text-brandGoldLight font-bold" : "bg-brandSoftGreen/60 text-brandBody hover:text-brandHeading border border-brandBorder"
     }`;
     btn.textContent = `${cat.name} (${count})`;
     btn.onclick = () => {
@@ -154,7 +161,7 @@ function renderProductsTable() {
   if (filtered.length === 0) {
     productsTbody.innerHTML = `
       <tr>
-        <td colspan="7" class="py-8 text-center text-gray-400 font-mono">No components found matching search criteria.</td>
+        <td colspan="6" class="py-8 text-center text-gray-400 font-mono">No components found matching search criteria.</td>
       </tr>
     `;
     tableFooterInfo.firstElementChild.textContent = "Showing 0 components";
@@ -165,35 +172,26 @@ function renderProductsTable() {
     const tr = document.createElement("tr");
     tr.className = "hover:bg-brandOffWhite transition-colors";
 
-    const hasFullSeo = p.metaTitle && p.metaDescription && p.slug;
-    const seoScore = p.seoHealth ? p.seoHealth.score : (hasFullSeo ? 100 : 50);
-
     tr.innerHTML = `
-      <td class="py-3.5 px-4 font-mono font-bold text-brandDark whitespace-nowrap">${p.partNumber}</td>
+      <td class="py-3.5 px-4 font-heading font-bold text-brandDark whitespace-nowrap">${p.partNumber}</td>
       <td class="py-3.5 px-4">
         <div class="w-10 h-10 rounded-[2px] border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
-          ${p.image ? `<img src="${p.image}" alt="${p.partNumber}" class="w-full h-full object-cover" />` : '<span class="text-[9px] text-gray-400 font-mono">N/A</span>'}
+          ${p.image ? `<img src="${p.image}" alt="${p.partNumber}" class="w-full h-full object-cover" />` : '<span class="text-[9px] text-gray-400 font-sans">N/A</span>'}
         </div>
       </td>
       <td class="py-3.5 px-4 whitespace-nowrap">
-        <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-[10px] font-mono font-bold text-brandDark rounded-[2px] uppercase">
+        <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-[10px] font-sans font-medium text-brandDark rounded-[2px] uppercase">
           ${p.category || p.categoryKey}
         </span>
       </td>
-      <td class="py-3.5 px-4 max-w-xs text-gray-600 line-clamp-2 leading-relaxed">${p.description || ""}</td>
+      <td class="py-3.5 px-4 max-w-xs text-gray-600 line-clamp-2 leading-relaxed font-sans font-normal">${p.description || ""}</td>
       <td class="py-3.5 px-4 whitespace-nowrap">
-        <div class="font-mono font-bold text-brandDark">${p.stock} units</div>
-        <div class="text-[11px] text-brandGold font-semibold">${p.location || ""}</div>
-      </td>
-      <td class="py-3.5 px-4 whitespace-nowrap">
-        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 ${seoScore >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} border text-[10px] font-mono rounded-[2px]">
-          <span class="w-1.5 h-1.5 rounded-full ${seoScore >= 80 ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
-          ${seoScore}% SCORE
-        </span>
+        <div class="font-stats font-bold text-brandDark">${p.stock} units</div>
+        <div class="text-[11px] text-brandGold font-sans font-medium">${p.location || ""}</div>
       </td>
       <td class="py-3.5 px-4 text-right whitespace-nowrap">
         <div class="flex items-center justify-end gap-2">
-          <button class="btn-edit px-2.5 py-1 bg-brandDark text-brandGold hover:bg-brandNavy text-xs font-bold font-mono rounded-[2px]">EDIT &amp; SEO</button>
+          <button class="btn-edit px-2.5 py-1 bg-brandDark text-brandGoldLight hover:bg-brandNavy text-xs font-semibold font-sans rounded-[2px] transition-colors cursor-pointer">EDIT &amp; SEO</button>
           <button class="btn-delete text-gray-400 hover:text-red-600 font-bold p-1">&times;</button>
         </div>
       </td>
@@ -225,10 +223,10 @@ tabs.forEach(({ btn, content }) => {
   btn.onclick = () => {
     tabs.forEach((t) => {
       t.btn.classList.remove("border-brandGold", "text-brandDark");
-      t.btn.classList.add("border-transparent", "text-[#68717A]");
+      t.btn.classList.add("border-transparent", "text-[#68736B]");
       t.content.classList.add("hidden");
     });
-    btn.classList.remove("border-transparent", "text-[#68717A]");
+    btn.classList.remove("border-transparent", "text-[#68736B]");
     btn.classList.add("border-brandGold", "text-brandDark");
     content.classList.remove("hidden");
 
