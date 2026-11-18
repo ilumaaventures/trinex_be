@@ -161,7 +161,7 @@ function renderProductsTable() {
   if (filtered.length === 0) {
     productsTbody.innerHTML = `
       <tr>
-        <td colspan="7" class="py-8 text-center text-gray-400 font-mono">No components found matching search criteria.</td>
+        <td colspan="6" class="py-8 text-center text-gray-400 font-mono">No components found matching search criteria.</td>
       </tr>
     `;
     tableFooterInfo.firstElementChild.textContent = "Showing 0 components";
@@ -171,9 +171,6 @@ function renderProductsTable() {
   filtered.forEach((p) => {
     const tr = document.createElement("tr");
     tr.className = "hover:bg-brandOffWhite transition-colors";
-
-    const hasFullSeo = p.metaTitle && p.metaDescription && p.slug;
-    const seoScore = p.seoHealth ? p.seoHealth.score : (hasFullSeo ? 100 : 50);
 
     tr.innerHTML = `
       <td class="py-3.5 px-4 font-heading font-bold text-brandDark whitespace-nowrap">${p.partNumber}</td>
@@ -191,12 +188,6 @@ function renderProductsTable() {
       <td class="py-3.5 px-4 whitespace-nowrap">
         <div class="font-stats font-bold text-brandDark">${p.stock} units</div>
         <div class="text-[11px] text-brandGold font-sans font-medium">${p.location || ""}</div>
-      </td>
-      <td class="py-3.5 px-4 whitespace-nowrap">
-        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 ${seoScore >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} border text-[10px] font-sans font-medium rounded-[2px]">
-          <span class="w-1.5 h-1.5 rounded-full ${seoScore >= 80 ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
-          ${seoScore}% SCORE
-        </span>
       </td>
       <td class="py-3.5 px-4 text-right whitespace-nowrap">
         <div class="flex items-center justify-end gap-2">
