@@ -14,6 +14,10 @@ const DATA_DIR = path.join(__dirname, "..", "data");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
 const CATEGORIES_FILE = path.join(DATA_DIR, "categories.json");
 
+function escapeRegex(str) {
+  return String(str || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 /**
  * Initial seed catalog
  */
@@ -260,7 +264,7 @@ export async function readProducts(queryFilter = {}) {
       }
 
       if (queryFilter.location && queryFilter.location !== "all") {
-        mongoFilter.location = { $regex: queryFilter.location, $options: "i" };
+        mongoFilter.location = { $regex: escapeRegex(queryFilter.location), $options: "i" };
       }
 
       if (queryFilter.minStock !== undefined) {
@@ -272,7 +276,7 @@ export async function readProducts(queryFilter = {}) {
       }
 
       if (queryFilter.search) {
-        const q = queryFilter.search.trim();
+        const q = escapeRegex(queryFilter.search.trim());
         mongoFilter.$or = [
           { partNumber: { $regex: q, $options: "i" } },
           { category: { $regex: q, $options: "i" } },
@@ -389,20 +393,40 @@ export async function readProducts(queryFilter = {}) {
 }
 
 /**
- * Get Product by ID (Checks MongoDB _id or string ID)
+ * Get Product by ID, slug, or partNumber
  */
 export async function getProductById(id) {
+  const strId = String(id || "").trim();
+  if (!strId) return null;
+
   if (isMongoConnected()) {
     try {
-      const doc = await Product.findById(id);
-      if (doc) return doc.toJSON();
+      if (mongoose.Types.ObjectId.isValid(strId) && strId.length === 24) {
+        const doc = await Product.findById(strId);
+        if (doc) return doc.toJSON();
+      }
+      const bySlugOrPart = await Product.findOne({
+        $or: [
+          { slug: strId },
+          { partNumber: new RegExp(`^${escapeRegex(strId)}$`, "i") },
+        ],
+      });
+      if (bySlugOrPart) return bySlugOrPart.toJSON();
     } catch {
-      // id might not be ObjectId, check partNumber or continue
+      // Fallback to list lookup
     }
   }
 
   const items = await readProducts();
-  return items.find((p) => String(p.id) === String(id)) || null;
+  return (
+    items.find(
+      (p) =>
+        String(p.id) === strId ||
+        String(p._id) === strId ||
+        String(p.slug || "").toLowerCase() === strId.toLowerCase() ||
+        String(p.partNumber || "").toLowerCase() === strId.toLowerCase()
+    ) || null
+  );
 }
 
 /**
@@ -816,9 +840,10 @@ export async function updateCategory(id, catData) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       let updated = await Category.findOneAndUpdate(
         query,
@@ -829,7 +854,7 @@ export async function updateCategory(id, catData) {
         // If slug changed, cascade update to products
         if (catData.id && String(catData.id).toLowerCase() !== strId.toLowerCase()) {
           await Product.updateMany(
-            { categoryKey: new RegExp(`^${strId}$`, "i") },
+            { categoryKey: safeIdRegex },
             { $set: { categoryKey: catData.id } }
           );
         }
@@ -866,9 +891,10 @@ export async function deleteCategory(id) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       const res = await Category.findOneAndDelete(query);
       if (res) {
@@ -942,9 +968,10 @@ export async function getCategoryById(id) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       const cat = await Category.findOne(query);
       if (cat) return cat.toJSON();
@@ -969,9 +996,10 @@ export async function toggleCategoryVisibility(id) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       const cat = await Category.findOne(query);
       if (cat) {

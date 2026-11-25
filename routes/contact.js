@@ -1,13 +1,23 @@
 import express from "express";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
 import { Enquiry } from "../models/Enquiry.js";
+import { isMongoConnected } from "../config/db.js";
+import { sendEnquiryEmail } from "../services/emailService.js";
+import { requireAuth } from "./auth.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ENQUIRIES_FILE = path.join(__dirname, "..", "data", "enquiries.json");
 
 const router = express.Router();
 
-const OFFICIAL_EMAIL = "connect@trinexsystems.in";
+const OFFICIAL_EMAIL = process.env.CONTACT_EMAIL || "connect@trinexsystems.in";
 
 /**
  * POST /api/contact - Receive new inquiry/lead
- * Destination & Sender configured strictly as connect@trinexsystems.in
+ * Persists to MongoDB (or local JSON fallback) and dispatches email if SMTP is configured.
  */
 router.post("/", async (req, res) => {
   try {
@@ -20,34 +30,64 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Record inquiry with official sender & recipient
-    const enquiry = new Enquiry({
-      name,
-      email,
-      phone: phone || "",
-      company: company || "",
-      message,
+    const payload = {
+      name: String(name).trim(),
+      email: String(email).trim(),
+      phone: phone ? String(phone).trim() : "",
+      company: company ? String(company).trim() : "",
+      message: String(message).trim(),
       source,
       recipient: OFFICIAL_EMAIL,
       sender: OFFICIAL_EMAIL,
       status: "new",
+    };
+
+    let savedRecord;
+    if (isMongoConnected()) {
+      const enquiry = new Enquiry(payload);
+      await enquiry.save();
+      savedRecord = {
+        id: enquiry._id,
+        name: enquiry.name,
+        recipient: enquiry.recipient,
+        createdAt: enquiry.createdAt,
+      };
+    } else {
+      await fs.mkdir(path.dirname(ENQUIRIES_FILE), { recursive: true });
+      let list = [];
+      try {
+        const raw = await fs.readFile(ENQUIRIES_FILE, "utf-8");
+        list = JSON.parse(raw);
+      } catch {
+        list = [];
+      }
+      const entry = {
+        ...payload,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+      };
+      list.unshift(entry);
+      await fs.writeFile(ENQUIRIES_FILE, JSON.stringify(list, null, 2), "utf-8");
+      savedRecord = {
+        id: entry.id,
+        name: entry.name,
+        recipient: entry.recipient,
+        createdAt: entry.createdAt,
+      };
+    }
+
+    sendEnquiryEmail(payload).catch((mailErr) => {
+      console.warn("[ENQUIRY EMAIL WARNING]:", mailErr.message);
     });
 
-    await enquiry.save();
-
-    console.log(`[ENQUIRY RECEIVED] From: ${name} (${email}) -> Routed to: ${OFFICIAL_EMAIL}`);
+    console.log(`[ENQUIRY RECEIVED] From: ${payload.name} (${payload.email}) -> Routed to: ${OFFICIAL_EMAIL}`);
 
     return res.status(201).json({
       success: true,
       message: `Enquiry successfully registered and routed to ${OFFICIAL_EMAIL}`,
       recipient: OFFICIAL_EMAIL,
       sender: OFFICIAL_EMAIL,
-      data: {
-        id: enquiry._id,
-        name: enquiry.name,
-        recipient: enquiry.recipient,
-        createdAt: enquiry.createdAt,
-      },
+      data: savedRecord,
     });
   } catch (err) {
     console.error("[ENQUIRY ERROR]:", err);
@@ -59,11 +99,27 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * GET /api/contact - List enquiries (for admin inspection)
+ * GET /api/contact - List enquiries (protected for admin inspection)
  */
-router.get("/", async (req, res) => {
+router.get("/", requireAuth, async (req, res) => {
   try {
-    const enquiries = await Enquiry.find().sort({ createdAt: -1 }).limit(100);
+    if (isMongoConnected()) {
+      const enquiries = await Enquiry.find().sort({ createdAt: -1 }).limit(100);
+      return res.json({
+        success: true,
+        count: enquiries.length,
+        data: enquiries,
+      });
+    }
+
+    let enquiries = [];
+    try {
+      const raw = await fs.readFile(ENQUIRIES_FILE, "utf-8");
+      enquiries = JSON.parse(raw).slice(0, 100);
+    } catch {
+      enquiries = [];
+    }
+
     return res.json({
       success: true,
       count: enquiries.length,

@@ -72,7 +72,7 @@ router.post("/login", (req, res) => {
       });
     }
 
-    // Check credentials (accepts configured admin email, username 'admin', or standard domain aliases)
+    // Check credentials against configured admin email/username and password
     const allowedIdentifiers = new Set([
       "admin",
       "admin@trinexsystems.in",
@@ -87,12 +87,9 @@ router.post("/login", (req, res) => {
 
     const isIdentifierValid =
       allowedIdentifiers.has(inputIdentifier) ||
-      inputIdentifier.startsWith("admin@") ||
       inputIdentifier === ADMIN_EMAIL;
 
-    const isPasswordValid =
-      inputPassword === ADMIN_PASSWORD ||
-      inputPassword === "admin@trinex2026";
+    const isPasswordValid = inputPassword === ADMIN_PASSWORD;
 
     if (!isIdentifierValid || !isPasswordValid) {
       return res.status(401).json({
@@ -162,6 +159,31 @@ router.get("/verify", (req, res) => {
 router.post("/logout", (req, res) => {
   return res.json({ success: true, message: "Logged out successfully." });
 });
+
+/**
+ * Express middleware to protect admin routes with Bearer JWT authentication
+ */
+export function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required. Please sign in.",
+    });
+  }
+
+  const token = authHeader.split(" ")[1];
+  const payload = verifyToken(token);
+  if (!payload) {
+    return res.status(401).json({
+      success: false,
+      message: "Session expired or invalid. Please sign in again.",
+    });
+  }
+
+  req.user = payload;
+  return next();
+}
 
 export default router;
 

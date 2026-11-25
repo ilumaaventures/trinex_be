@@ -1,4 +1,5 @@
 import express from "express";
+import { requireAuth } from "./auth.js";
 import {
   readCategories,
   createCategory,
@@ -30,7 +31,7 @@ router.get("/", async (req, res) => {
  * PATCH /api/categories/:id/visibility
  * Toggle category hidden status from public website
  */
-router.patch("/:id/visibility", async (req, res) => {
+router.patch("/:id/visibility", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     if (!id || id === "undefined" || id === "null") {
@@ -56,7 +57,7 @@ router.patch("/:id/visibility", async (req, res) => {
  * POST /api/categories
  * Create a new strategic product category
  */
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const { name, subtitle, description, image, id } = req.body;
     if (!name || !name.trim()) {
@@ -78,7 +79,7 @@ router.post("/", async (req, res) => {
  * PUT /api/categories/:id
  * Update an existing category
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   try {
     const updated = await updateCategory(req.params.id, req.body);
     if (!updated) {
@@ -98,7 +99,7 @@ router.put("/:id", async (req, res) => {
  * DELETE /api/categories/:id
  * Remove a category
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const removed = await deleteCategory(req.params.id);
     if (!removed) {

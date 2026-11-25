@@ -1,4 +1,5 @@
 import express from "express";
+import { requireAuth } from "./auth.js";
 import {
   readProducts,
   getProductById,
@@ -17,7 +18,7 @@ const router = express.Router();
  * POST /api/products/sync-seo
  * Run automated SEO optimization across all products in the database
  */
-router.post("/sync-seo", async (req, res) => {
+router.post("/sync-seo", requireAuth, async (req, res) => {
   try {
     const result = await syncAllSeo();
     res.json({ success: true, data: result });
@@ -43,7 +44,7 @@ router.get("/stats", async (req, res) => {
  * POST /api/products/reset
  * Restore factory catalog defaults
  */
-router.post("/reset", async (req, res) => {
+router.post("/reset", requireAuth, async (req, res) => {
   try {
     const products = await resetCatalog();
     res.json({
@@ -104,7 +105,7 @@ router.get("/:id", async (req, res) => {
  * POST /api/products
  * Create a new product with full SEO suite
  */
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const { partNumber, description, category, categoryKey } = req.body;
     if (!partNumber || !description || (!categoryKey && !category)) {
@@ -129,7 +130,7 @@ router.post("/", async (req, res) => {
  * PUT /api/products/:id
  * Update an existing product and its SEO tags
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   try {
     const { partNumber, description, categoryKey } = req.body;
     if (partNumber !== undefined && !String(partNumber).trim()) {
@@ -160,7 +161,7 @@ router.put("/:id", async (req, res) => {
  * DELETE /api/products/:id
  * Remove a product from the database
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const removed = await deleteProduct(req.params.id);
     if (!removed) {
@@ -179,7 +180,7 @@ router.delete("/:id", async (req, res) => {
  * PATCH /api/products/:id/visibility
  * Toggle product hidden status from main site
  */
-router.patch("/:id/visibility", async (req, res) => {
+router.patch("/:id/visibility", requireAuth, async (req, res) => {
   try {
     const updated = await toggleProductVisibility(req.params.id);
     if (!updated) {
