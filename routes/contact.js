@@ -3,11 +3,11 @@ import { Enquiry } from "../models/Enquiry.js";
 
 const router = express.Router();
 
-const OFFICIAL_EMAIL = "info@trinexsystems.in";
+const OFFICIAL_EMAIL = "connect@trinexsystems.in";
 
 /**
  * POST /api/contact - Receive new inquiry/lead
- * Destination & Sender configured strictly as info@trinexsystems.in
+ * Destination & Sender configured strictly as connect@trinexsystems.in
  */
 router.post("/", async (req, res) => {
   try {
@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
     console.error("[ENQUIRY ERROR]:", err);
     return res.status(500).json({
       success: false,
-      error: "Failed to process enquiry. Please email directly to info@trinexsystems.in",
+      error: "Failed to process enquiry. Please email directly to connect@trinexsystems.in",
     });
   }
 });

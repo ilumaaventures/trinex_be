@@ -79,9 +79,9 @@ router.post("/login", (req, res) => {
       "admin@trinexsystem.in",
       "admin@trinexsystems.com",
       "admin@trinexsystem.com",
-      "info@trinexsystems.com",
-      "info@trinexsystems.in",
-      "info@trinexsystem.in",
+      "connect@trinexsystems.in",
+      "connect@trinexsystems.com",
+      "connect@trinexsystem.in",
       ADMIN_EMAIL,
     ]);
 
