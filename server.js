@@ -65,8 +65,8 @@ const corsOptions = {
       return callback(null, true);
     }
 
-    // Allow all Vercel deployment and preview URLs (*.vercel.app)
-    if (/^https:\/\/([a-zA-Z0-9_-]+\.)?vercel\.app$/.test(cleanOrigin)) {
+    // Allow Trinex Vercel deployment and preview URLs (trinex-*.vercel.app)
+    if (/^https:\/\/trinex[a-zA-Z0-9_-]*\.vercel\.app$/.test(cleanOrigin)) {
       return callback(null, true);
     }
 

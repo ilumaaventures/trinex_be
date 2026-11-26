@@ -46,3 +46,8 @@ Thumbs.db
 *.sw?
 *.bak
 
+# Data & Seed Files
+data/*.json
+data/products.json
+data/categories.json
+

@@ -14,6 +14,10 @@ const DATA_DIR = path.join(__dirname, "..", "data");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
 const CATEGORIES_FILE = path.join(DATA_DIR, "categories.json");
 
+function escapeRegex(str) {
+  return String(str || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 /**
  * Initial seed catalog
  */
@@ -132,31 +136,11 @@ const DEFAULT_INITIAL_PRODUCTS = [
 ];
 
 /**
- * Keep products.json and categories.json backup files continuously 1:1 synchronized with MongoDB
+ * In pure database mode, MongoDB is the single source of truth.
+ * syncLocalBackups is a no-op so no local JSON files are created or maintained in the codebase.
  */
 export async function syncLocalBackups() {
-  if (isMongoConnected()) {
-    try {
-      const allDocs = await Product.find({}).sort({ createdAt: -1 });
-      if (allDocs.length > 0) {
-        await fs.writeFile(
-          PRODUCTS_FILE,
-          JSON.stringify(allDocs.map((d) => d.toJSON()), null, 2),
-          "utf-8"
-        );
-      }
-      const allCats = await Category.find({}).sort({ createdAt: 1 });
-      if (allCats.length > 0) {
-        await fs.writeFile(
-          CATEGORIES_FILE,
-          JSON.stringify(allCats.map((c) => c.toJSON()), null, 2),
-          "utf-8"
-        );
-      }
-    } catch (e) {
-      console.warn("[Storage] Warning syncing local backup files:", e.message);
-    }
-  }
+  return;
 }
 
 /**
@@ -214,79 +198,38 @@ export async function initStorage() {
   if (isMongoConnected()) {
     try {
       const count = await Product.countDocuments();
-      if (count < 50) {
-        console.log("[MongoDB] Seeding full catalogue into MongoDB 'trinix' database...");
-        let docs = [];
-        try {
-          const raw = await fs.readFile(PRODUCTS_FILE, "utf-8");
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            docs = parsed.map((item) => ({
-              ...item,
-              ...buildCompleteSeo(item),
-            }));
-          }
-        } catch (readErr) {
-          console.warn("[MongoDB] Could not read products.json for initial seed:", readErr.message);
-        }
-
-        if (docs.length === 0) {
-          docs = DEFAULT_INITIAL_PRODUCTS.map((item) => ({
-            ...item,
-            ...buildCompleteSeo(item),
-          }));
-        }
-
-        if (count > 0) {
-          // If previous partial seed existed, upsert by partNumber
-          for (const item of docs) {
-            await Product.findOneAndUpdate(
-              { partNumber: item.partNumber },
-              { $set: item },
-              { upsert: true, new: true }
-            );
-          }
-        } else {
-          await Product.insertMany(docs);
-        }
-        const total = await Product.countDocuments();
-        console.log(`[MongoDB] Successfully ensured ${total} components with complete SEO in database.`);
+      if (count === 0) {
+        console.log("[MongoDB] Database empty. Seeding minimal initial products...");
+        const docs = DEFAULT_INITIAL_PRODUCTS.map((item) => ({
+          ...item,
+          ...buildCompleteSeo(item),
+        }));
+        await Product.insertMany(docs);
+        console.log(`[MongoDB] Initialized database with ${docs.length} products.`);
       }
 
       // Seed categories in MongoDB if empty
       const catCount = await Category.countDocuments();
       if (catCount === 0) {
-        try {
-          const raw = await fs.readFile(CATEGORIES_FILE, "utf-8");
-          const defaultCats = JSON.parse(raw);
-          await Category.insertMany(defaultCats);
-          console.log(`[MongoDB] Successfully seeded ${defaultCats.length} default categories.`);
-        } catch (e) {
-          console.warn("[MongoDB] Error seeding categories:", e.message);
-        }
+        const defaultCats = [
+          { id: "resistors", name: "Resistors", subtitle: "Precision & Power Resistors", icon: "sliders", isHidden: false },
+          { id: "capacitors", name: "Capacitors", subtitle: "Tantalum, Ceramic & Film", icon: "box", isHidden: false },
+          { id: "microcircuits", name: "Microcircuits", subtitle: "Logic & Digital ICs", icon: "cpu", isHidden: false },
+          { id: "transistors-diodes", name: "Diodes & Transistors", subtitle: "Power Transistors & Zener Diodes", icon: "zap", isHidden: false },
+          { id: "connectors", name: "Connectors", subtitle: "Mil-Spec Multi-Pin Connectors", icon: "link", isHidden: false },
+          { id: "motors-generators", name: "Motors & Generators", subtitle: "Precision Servo Motors", icon: "disc", isHidden: false },
+          { id: "transformers", name: "Transformers & Power", subtitle: "Transformers, Power Units & Chokes", icon: "layers", isHidden: false },
+          { id: "switches-relays", name: "Switches & Protection", subtitle: "Switches, Fuses & Indicators", icon: "toggle-left", isHidden: false },
+        ];
+        await Category.insertMany(defaultCats);
+        console.log(`[MongoDB] Initialized database with ${defaultCats.length} default categories.`);
       }
 
-      await syncLocalBackups();
       await refreshSitemapFiles();
       return;
     } catch (err) {
-      console.error("[MongoDB] Error checking/seeding products/categories:", err);
+      console.error("[MongoDB] Error initializing products/categories:", err);
     }
-  }
-
-  // File system fallback
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  try {
-    await fs.access(PRODUCTS_FILE);
-  } catch {
-    const seeded = DEFAULT_INITIAL_PRODUCTS.map((item, idx) => ({
-      id: idx + 1,
-      ...item,
-      ...buildCompleteSeo(item),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
-    await fs.writeFile(PRODUCTS_FILE, JSON.stringify(seeded, null, 2), "utf-8");
   }
 }
 
@@ -321,7 +264,7 @@ export async function readProducts(queryFilter = {}) {
       }
 
       if (queryFilter.location && queryFilter.location !== "all") {
-        mongoFilter.location = { $regex: queryFilter.location, $options: "i" };
+        mongoFilter.location = { $regex: escapeRegex(queryFilter.location), $options: "i" };
       }
 
       if (queryFilter.minStock !== undefined) {
@@ -333,7 +276,7 @@ export async function readProducts(queryFilter = {}) {
       }
 
       if (queryFilter.search) {
-        const q = queryFilter.search.trim();
+        const q = escapeRegex(queryFilter.search.trim());
         mongoFilter.$or = [
           { partNumber: { $regex: q, $options: "i" } },
           { category: { $regex: q, $options: "i" } },
@@ -430,7 +373,9 @@ export async function readProducts(queryFilter = {}) {
 
     return items;
   } catch (err) {
-    console.error("Failed to read products file:", err);
+    if (err.code !== "ENOENT") {
+      console.warn("Notice: products data file not present or unreadable:", err.message);
+    }
     return isPaginated
       ? {
           products: [],
@@ -448,20 +393,40 @@ export async function readProducts(queryFilter = {}) {
 }
 
 /**
- * Get Product by ID (Checks MongoDB _id or string ID)
+ * Get Product by ID, slug, or partNumber
  */
 export async function getProductById(id) {
+  const strId = String(id || "").trim();
+  if (!strId) return null;
+
   if (isMongoConnected()) {
     try {
-      const doc = await Product.findById(id);
-      if (doc) return doc.toJSON();
+      if (mongoose.Types.ObjectId.isValid(strId) && strId.length === 24) {
+        const doc = await Product.findById(strId);
+        if (doc) return doc.toJSON();
+      }
+      const bySlugOrPart = await Product.findOne({
+        $or: [
+          { slug: strId },
+          { partNumber: new RegExp(`^${escapeRegex(strId)}$`, "i") },
+        ],
+      });
+      if (bySlugOrPart) return bySlugOrPart.toJSON();
     } catch {
-      // id might not be ObjectId, check partNumber or continue
+      // Fallback to list lookup
     }
   }
 
   const items = await readProducts();
-  return items.find((p) => String(p.id) === String(id)) || null;
+  return (
+    items.find(
+      (p) =>
+        String(p.id) === strId ||
+        String(p._id) === strId ||
+        String(p.slug || "").toLowerCase() === strId.toLowerCase() ||
+        String(p.partNumber || "").toLowerCase() === strId.toLowerCase()
+    ) || null
+  );
 }
 
 /**
@@ -637,33 +602,16 @@ export async function deleteProduct(id) {
  * Reset Catalog to Factory Defaults
  */
 export async function resetCatalog() {
-  let docs = [];
-  try {
-    const raw = await fs.readFile(PRODUCTS_FILE, "utf-8");
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      docs = parsed.map((item) => ({
-        ...item,
-        ...buildCompleteSeo(item),
-      }));
-    }
-  } catch (err) {
-    console.warn("Could not read products.json for reset:", err.message);
-  }
-
-  if (docs.length === 0) {
-    docs = DEFAULT_INITIAL_PRODUCTS.map((item) => ({
-      ...item,
-      ...buildCompleteSeo(item),
-    }));
-  }
+  const docs = DEFAULT_INITIAL_PRODUCTS.map((item) => ({
+    ...item,
+    ...buildCompleteSeo(item),
+  }));
 
   if (isMongoConnected()) {
     try {
       await Product.deleteMany({});
       const inserted = await Product.insertMany(docs);
       console.log(`[MongoDB] Catalog reset. Inserted ${inserted.length} default items.`);
-      await syncLocalBackups();
       await refreshSitemapFiles();
       return inserted.map((d) => d.toJSON());
     } catch (err) {
@@ -671,20 +619,11 @@ export async function resetCatalog() {
     }
   }
 
-  // File fallback
-  const seeded = docs.map((item, idx) => ({
-    id: idx + 1,
-    ...item,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }));
-  await fs.writeFile(PRODUCTS_FILE, JSON.stringify(seeded, null, 2), "utf-8");
-  await refreshSitemapFiles();
-  return seeded;
+  return docs;
 }
 
 /**
- * Sync and Optimize SEO for All Products in MongoDB and products.json
+ * Sync and Optimize SEO for All Products in MongoDB
  */
 export async function syncAllSeo() {
   let updatedCount = 0;
@@ -708,24 +647,6 @@ export async function syncAllSeo() {
     }
   }
 
-  // Also update products.json
-  try {
-    const raw = await fs.readFile(PRODUCTS_FILE, "utf-8");
-    const fileItems = JSON.parse(raw);
-    if (Array.isArray(fileItems)) {
-      const updatedFileItems = fileItems.map((item) => ({
-        ...item,
-        ...buildCompleteSeo(item),
-        updatedAt: new Date().toISOString(),
-      }));
-      await fs.writeFile(PRODUCTS_FILE, JSON.stringify(updatedFileItems, null, 2), "utf-8");
-      if (allProducts.length === 0) allProducts = updatedFileItems;
-    }
-  } catch (err) {
-    console.warn("Error updating products.json during syncAllSeo:", err.message);
-  }
-
-  await syncLocalBackups();
   await refreshSitemapFiles();
 
   return {
@@ -919,9 +840,10 @@ export async function updateCategory(id, catData) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       let updated = await Category.findOneAndUpdate(
         query,
@@ -932,7 +854,7 @@ export async function updateCategory(id, catData) {
         // If slug changed, cascade update to products
         if (catData.id && String(catData.id).toLowerCase() !== strId.toLowerCase()) {
           await Product.updateMany(
-            { categoryKey: new RegExp(`^${strId}$`, "i") },
+            { categoryKey: safeIdRegex },
             { $set: { categoryKey: catData.id } }
           );
         }
@@ -969,9 +891,10 @@ export async function deleteCategory(id) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       const res = await Category.findOneAndDelete(query);
       if (res) {
@@ -1045,9 +968,10 @@ export async function getCategoryById(id) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       const cat = await Category.findOne(query);
       if (cat) return cat.toJSON();
@@ -1072,9 +996,10 @@ export async function toggleCategoryVisibility(id) {
   if (isMongoConnected()) {
     try {
       const isObjectId = mongoose.Types.ObjectId.isValid(strId) && strId.length === 24;
+      const safeIdRegex = new RegExp(`^${escapeRegex(strId)}$`, "i");
       const query = isObjectId
-        ? { $or: [{ _id: strId }, { id: new RegExp(`^${strId}$`, "i") }] }
-        : { id: new RegExp(`^${strId}$`, "i") };
+        ? { $or: [{ _id: strId }, { id: safeIdRegex }] }
+        : { id: safeIdRegex };
 
       const cat = await Category.findOne(query);
       if (cat) {
