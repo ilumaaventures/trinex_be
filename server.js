@@ -110,7 +110,7 @@ app.get("/sitemap.xml", async (req, res) => {
   try {
     const products = await readProducts();
     const categories = await readCategories();
-    const baseUrl = process.env.BASE_URL || "https://trinexsystems.com";
+    const baseUrl = process.env.BASE_URL || "https://trinexsystems.in";
     const xml = generateSitemapXml({ products, categories, baseUrl });
     res.header("Content-Type", "application/xml; charset=utf-8");
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -123,7 +123,7 @@ app.get("/sitemap.xml", async (req, res) => {
 });
 
 app.get("/robots.txt", (req, res) => {
-  const baseUrl = process.env.BASE_URL || "https://trinexsystems.com";
+  const baseUrl = process.env.BASE_URL || "https://trinexsystems.in";
   const txt = generateRobotsTxt(baseUrl);
   res.header("Content-Type", "text/plain; charset=utf-8");
   res.header("Cache-Control", "no-cache, no-store, must-revalidate");

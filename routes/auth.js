@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import crypto from "crypto";
 
 const router = express.Router();
@@ -77,10 +77,10 @@ router.post("/login", (req, res) => {
       "admin",
       "admin@trinexsystems.in",
       "admin@trinexsystem.in",
-      "admin@trinexsystems.com",
+      "admin@trinexsystems.in",
       "admin@trinexsystem.com",
       "connect@trinexsystems.in",
-      "connect@trinexsystems.com",
+      "connect@trinexsystems.in",
       "connect@trinexsystem.in",
       ADMIN_EMAIL,
     ]);

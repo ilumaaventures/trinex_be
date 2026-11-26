@@ -1,19 +1,19 @@
-# Subdomain Setup & Deployment Guide: `admin.trinexsystems.com`
+﻿# Subdomain Setup & Deployment Guide: `admin.trinexsystems.in`
 
-This guide explains how to run and deploy the **Admin Panel** on its own dedicated subdomain (`admin.trinexsystems.com`), completely decoupled from the main customer-facing website (`trinexsystems.com`).
+This guide explains how to run and deploy the **Admin Panel** on its own dedicated subdomain (`admin.trinexsystems.in`), completely decoupled from the main customer-facing website (`trinexsystems.in`).
 
 ---
 
-## 🏛️ Architecture Overview
+## ðŸ›ï¸ Architecture Overview
 
 | Application | Folder | Purpose | Local URL | Production Domain |
 | :--- | :--- | :--- | :--- | :--- |
-| **Main Website** | `trinex_fe/` | Public corporate portal, branding, product catalog | `http://localhost:5173` | `https://trinexsystems.com` |
-| **Admin Panel** | `trinex_admin/` | Dedicated product CRUD, image upload, SEO suite | `http://localhost:5000` or `http://admin.localhost:5000` | `https://admin.trinexsystems.com` |
+| **Main Website** | `trinex_fe/` | Public corporate portal, branding, product catalog | `http://localhost:5173` | `https://trinexsystems.in` |
+| **Admin Panel** | `trinex_admin/` | Dedicated product CRUD, image upload, SEO suite | `http://localhost:5000` or `http://admin.localhost:5000` | `https://admin.trinexsystems.in` |
 
 ---
 
-## 💻 Local Subdomain Testing (Windows / Mac / Linux)
+## ðŸ’» Local Subdomain Testing (Windows / Mac / Linux)
 
 You can test real subdomain routing locally using your system's `hosts` file:
 
@@ -38,18 +38,18 @@ You can test real subdomain routing locally using your system's `hosts` file:
 
 ---
 
-## ☁️ Production DNS Configuration
+## â˜ï¸ Production DNS Configuration
 
 In your domain registrar / DNS provider (Cloudflare, GoDaddy, Namecheap, AWS Route 53):
 
 | Type | Name / Subdomain | Target / Value | TTL |
 | :--- | :--- | :--- | :--- |
-| **A** or **CNAME** | `@` (or `trinexsystems.com`) | `YOUR_SERVER_IP` (or Vercel / Netlify IP) | Auto |
-| **A** or **CNAME** | `admin` (or `admin.trinexsystems.com`) | `YOUR_SERVER_IP` | Auto |
+| **A** or **CNAME** | `@` (or `trinexsystems.in`) | `YOUR_SERVER_IP` (or Vercel / Netlify IP) | Auto |
+| **A** or **CNAME** | `admin` (or `admin.trinexsystems.in`) | `YOUR_SERVER_IP` | Auto |
 
 ---
 
-## 🚀 Running Both Modules Simultaneously
+## ðŸš€ Running Both Modules Simultaneously
 
 You can run both the client website and the admin subdomain concurrently in two separate terminal windows:
 

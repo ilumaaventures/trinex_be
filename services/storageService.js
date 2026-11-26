@@ -42,7 +42,7 @@ const DEFAULT_INITIAL_PRODUCTS = [
     description: "Compact military pulse transformer for aerospace electronic subsystems",
     stock: 2,
     location: "Central Stock",
-    delivery: "4–7 Days Delivery",
+    delivery: "4â€“7 Days Delivery",
     compliance: "MIL-STD-883",
   },
   {
@@ -86,7 +86,7 @@ const DEFAULT_INITIAL_PRODUCTS = [
     description: "Complementary silicon high-power audio/linear switching transistor in TO-3 can",
     stock: 120,
     location: "Central Stock",
-    delivery: "2–4 Days Delivery",
+    delivery: "2â€“4 Days Delivery",
     compliance: "JANTX Standard",
   },
   {
@@ -130,7 +130,7 @@ const DEFAULT_INITIAL_PRODUCTS = [
     description: "Hermetic high-density circular plug with EMI ground spring, 61 socket pins",
     stock: 8,
     location: "Central Stock",
-    delivery: "3–5 Days Delivery",
+    delivery: "3â€“5 Days Delivery",
     compliance: "MIL-DTL-38999 Series III",
   },
 ];
@@ -158,7 +158,7 @@ export async function refreshSitemapFiles() {
 
     const products = await readProducts();
     const categories = await readCategories();
-    const baseUrl = process.env.BASE_URL || "https://trinexsystems.com";
+    const baseUrl = process.env.BASE_URL || "https://trinexsystems.in";
     const xml = generateSitemapXml({ products, categories, baseUrl });
     const robots = generateRobotsTxt(baseUrl);
 
@@ -168,12 +168,12 @@ export async function refreshSitemapFiles() {
     await fs.writeFile(path.join(adminPublicDir, "robots.txt"), robots, "utf-8").catch(() => { });
 
     // Write to frontend public directory
-    const fePublicDir = path.join(__dirname, "..", "..", "trinex_fe", "public");
+    const fePublicDir = path.join(__dirname, "..", "..", "trinex", "public");
     await fs.writeFile(path.join(fePublicDir, "sitemap.xml"), xml, "utf-8").catch(() => { });
     await fs.writeFile(path.join(fePublicDir, "robots.txt"), robots, "utf-8").catch(() => { });
 
     // Write to frontend dist directory (if built)
-    const feDistDir = path.join(__dirname, "..", "..", "trinex_fe", "dist");
+    const feDistDir = path.join(__dirname, "..", "..", "trinex", "dist");
     try {
       await fs.access(feDistDir);
       await fs.writeFile(path.join(feDistDir, "sitemap.xml"), xml, "utf-8").catch(() => { });
@@ -260,7 +260,25 @@ export async function readProducts(queryFilter = {}) {
       }
 
       if (queryFilter.category && queryFilter.category !== "all") {
-        mongoFilter.categoryKey = queryFilter.category;
+        const rawCat = String(queryFilter.category).trim();
+        const catRegex = new RegExp(`^${escapeRegex(rawCat.replace(/s$/i, ""))}s?$`, "i");
+        const matchedCat = await Category.findOne({
+          $or: [{ id: new RegExp(`^${escapeRegex(rawCat)}$`, "i") }, { name: new RegExp(`^${escapeRegex(rawCat)}$`, "i") }],
+        }).lean().catch(() => null);
+
+        const orMatchers = [
+          { categoryKey: catRegex },
+          { category: catRegex },
+        ];
+        if (matchedCat) {
+          orMatchers.push({ categoryKey: new RegExp(`^${escapeRegex(matchedCat.id)}$`, "i") });
+          orMatchers.push({ category: new RegExp(`^${escapeRegex(matchedCat.name)}$`, "i") });
+          const singularName = String(matchedCat.name || "").replace(/s$/i, "").trim();
+          if (singularName) {
+            orMatchers.push({ category: new RegExp(`^${escapeRegex(singularName)}s?$`, "i") });
+          }
+        }
+        mongoFilter.$and = [...(mongoFilter.$and || []), { $or: orMatchers }];
       }
 
       if (queryFilter.location && queryFilter.location !== "all") {
@@ -277,13 +295,18 @@ export async function readProducts(queryFilter = {}) {
 
       if (queryFilter.search) {
         const q = escapeRegex(queryFilter.search.trim());
-        mongoFilter.$or = [
-          { partNumber: { $regex: q, $options: "i" } },
-          { category: { $regex: q, $options: "i" } },
-          { description: { $regex: q, $options: "i" } },
-          { metaTitle: { $regex: q, $options: "i" } },
-          { metaKeywords: { $regex: q, $options: "i" } },
-          { focusKeyword: { $regex: q, $options: "i" } },
+        mongoFilter.$and = [
+          ...(mongoFilter.$and || []),
+          {
+            $or: [
+              { partNumber: { $regex: q, $options: "i" } },
+              { category: { $regex: q, $options: "i" } },
+              { description: { $regex: q, $options: "i" } },
+              { metaTitle: { $regex: q, $options: "i" } },
+              { metaKeywords: { $regex: q, $options: "i" } },
+              { focusKeyword: { $regex: q, $options: "i" } },
+            ],
+          },
         ];
       }
 
@@ -488,8 +511,24 @@ export async function createProduct(payload) {
  * Update Product
  */
 export async function updateProduct(id, payload) {
-  let categoryKey = payload.categoryKey !== undefined ? String(payload.categoryKey).trim() : undefined;
-  let category = payload.category !== undefined ? String(payload.category).trim() : undefined;
+  let existingDoc = null;
+  if (isMongoConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(String(id)) && String(id).length === 24) {
+        existingDoc = await Product.findById(id).lean();
+      }
+      if (!existingDoc) {
+        existingDoc = await Product.findOne({
+          $or: [{ id: String(id) }, { partNumber: String(id) }],
+        }).lean();
+      }
+    } catch {
+      // ignore lookup error
+    }
+  }
+
+  let categoryKey = payload.categoryKey !== undefined ? String(payload.categoryKey).trim() : existingDoc?.categoryKey;
+  let category = payload.category !== undefined ? String(payload.category).trim() : existingDoc?.category;
 
   if (categoryKey && !category) {
     const cats = await readCategories();
@@ -500,6 +539,7 @@ export async function updateProduct(id, payload) {
   }
 
   const enhancedPayload = {
+    ...(existingDoc || {}),
     ...payload,
     ...(category !== undefined ? { category } : {}),
     ...(categoryKey !== undefined ? { categoryKey } : {}),
@@ -507,9 +547,11 @@ export async function updateProduct(id, payload) {
 
   const seoData = buildCompleteSeo(enhancedPayload);
   const updateData = {
-    ...enhancedPayload,
+    ...payload,
+    ...(category !== undefined ? { category } : {}),
+    ...(categoryKey !== undefined ? { categoryKey } : {}),
     ...seoData,
-    stock: payload.stock !== undefined ? Number(payload.stock) : undefined,
+    ...(payload.stock !== undefined ? { stock: Number(payload.stock) } : {}),
   };
 
   if (isMongoConnected()) {
