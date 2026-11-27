@@ -19,14 +19,26 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trinexsystems.in/products?category=connectors</loc>
+    <loc>https://trinexsystems.in/products?category=capacitors</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://trinexsystems.in/products?category=microcircuits</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trinexsystems.in/products?category=transistors-diodes</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trinexsystems.in/products?category=connectors</loc>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -37,26 +49,26 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trinexsystems.in/products?category=transistors-diodes</loc>
-    <lastmod>2026-10-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trinexsystems.in/products?category=capacitors</loc>
+    <loc>https://trinexsystems.in/products?category=transformers</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://trinexsystems.in/products?category=switches-fuses</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trinexsystems.in/products?category=transformers</loc>
-    <lastmod>2026-10-30</lastmod>
+    <loc>https://trinexsystems.in/products?category=demo</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://trinexsystems.in/products/sample-product-dummy</loc>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -380,7 +392,7 @@
   </url>
   <url>
     <loc>https://trinexsystems.in/products/dpr-2-f1-13-electric-motor</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -583,19 +595,13 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trinexsystems.in/products/d3899920wj35pn-connector</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://trinexsystems.in/products/d3899926wj61sn-connector</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trinexsystems.in/products/530tv9-micro-circuit</loc>
+    <loc>https://trinexsystems.in/products/d3899920wj35pn-connector</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -613,13 +619,19 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://trinexsystems.in/products/2n3055-power-transistor</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://trinexsystems.in/products/2n2222a-transistor</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://trinexsystems.in/products/2n3055-power-transistor</loc>
+    <loc>https://trinexsystems.in/products/530tv9-micro-circuit</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
