@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Trinex Systems Admin Console Client Logic
  */
 
@@ -379,7 +379,7 @@ function updatePreviews() {
   const slug = formSlug.value || pn.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const title = formMetaTitle.value || `${pn} | Trinex Systems LLP`;
   const desc = formMetaDescription.value || formDescription.value || "Precision defence and aerospace component.";
-  const url = formCanonicalUrl.value || `https://trinexsystems.com/products/${slug}`;
+  const url = formCanonicalUrl.value || `https://trinexsystems.in/products/${slug}`;
 
   serpUrl.textContent = url.replace("https://", "");
   serpTitle.textContent = title;

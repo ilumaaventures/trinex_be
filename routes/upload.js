@@ -5,6 +5,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { isCloudinaryConfigured } from "../config/cloudinary.js";
 import { uploadImageToCloudinary } from "../services/cloudinaryService.js";
+import { requireAuth } from "./auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,7 +57,7 @@ router.get("/status", (req, res) => {
  * POST /api/upload
  * Handles product/category image upload to Cloudinary (folder: 'trinix')
  */
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", requireAuth, upload.single("image"), async (req, res) => {
   try {
     // Case 1: Form-data Multipart File
     if (req.file) {

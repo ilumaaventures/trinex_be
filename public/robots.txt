@@ -1,7 +1,12 @@
 # robots.txt for Trinex Systems LLP
 User-agent: *
 Allow: /
+Allow: /api/products
+Allow: /api/categories
 Disallow: /admin
-Disallow: /api/
+Disallow: /api/auth
+Disallow: /api/upload
+Disallow: /api/contact
+Disallow: /api/seo/analyze
 
-Sitemap: https://trinexsystems.com/sitemap.xml
+Sitemap: https://trinexsystems.in/sitemap.xml

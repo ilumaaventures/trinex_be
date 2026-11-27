@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
+    "prestart": "node scripts/seedProduction.js",
+    "seed": "node scripts/seedProduction.js",
     "dev": "node --watch server.js"
   },
   "dependencies": {

@@ -8,8 +8,8 @@ const enquirySchema = new mongoose.Schema(
     company: { type: String, default: "" },
     message: { type: String, required: true },
     source: { type: String, default: "web-contact-form" },
-    recipient: { type: String, default: "info@trinexsystems.in" },
-    sender: { type: String, default: "info@trinexsystems.in" },
+    recipient: { type: String, default: "connect@trinexsystems.in" },
+    sender: { type: String, default: "connect@trinexsystems.in" },
     status: { type: String, default: "new" },
   },
   { timestamps: true }
